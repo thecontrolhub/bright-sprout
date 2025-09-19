@@ -50,16 +50,16 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <YStack flex={1} overflow="hidden"  >
+      <YStack flex={1} overflow="hidden" justifyContent="center" alignItems="center" padding="$4" backgroundColor="$background">
         <StatusBar barStyle="dark-content" />
-        {/* Background circles - kept as Views for now */}
-        <View style={{ position: 'absolute', width: 200, height: 200, top: -50, left: -80, opacity: 0.1, backgroundColor: '$green8', borderRadius: 1000 }} />
-        <View style={{ position: 'absolute', width: 150, height: 150, bottom: -60, right: -70, opacity: 0.15, backgroundColor: '$green8', borderRadius: 1000 }} />
-        <View style={{ position: 'absolute', width: 80, height: 80, top: '30%', right: -30, opacity: 0.08, backgroundColor: '$green8', borderRadius: 1000 }} />
+        {/* Background circles */}
+        <YStack position="absolute" width={200} height={200} top={-50} left={-80} opacity={0.1} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={150} height={150} bottom={-60} right={-70} opacity={0.15} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={80} height={80} top="30%" right={-30} opacity={0.08} backgroundColor="$green8" borderRadius={1000} />
 
-        <H1 color="$green10" fontFamily="$heading">BrightSprout</H1>
-        <H3 color="$color" fontFamily="$heading">Welcome Back</H3>
-        <Paragraph color="$color"  fontFamily="$body">Sign in to continue your learning journey.</Paragraph>
+        <H1 color="$green10" fontFamily="$heading" marginBottom="$2">BrightSprout</H1>
+        <H3 color="$color" fontFamily="$heading" marginBottom="$1">Welcome Back</H3>
+        <Paragraph color="$color" fontFamily="$body" marginBottom="$4">Sign in to continue your learning journey.</Paragraph>
 
         <Input
           placeholder="Email or Username"
@@ -68,7 +68,7 @@ export default function LoginScreen() {
           autoCapitalize="none"
           size="$4"
           width="100%"
-         
+          marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
           fontFamily="$body"
@@ -80,7 +80,7 @@ export default function LoginScreen() {
           secureTextEntry
           size="$4"
           width="100%"
-         
+          marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
           fontFamily="$body"
@@ -89,16 +89,16 @@ export default function LoginScreen() {
         <Button
           onPress={() => navigation.navigate('(auth)/ForgotPasswordScreen')}
           chromeless
-
+          marginVertical="$2"
         >
-          <Text  fontFamily="$body">Forgot Password?</Text>
+          <Text fontFamily="$body">Forgot Password?</Text>
         </Button>
 
-        <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleLogin} fontFamily="$body">
+        <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleLogin} fontFamily="$body" marginVertical="$2">
           Login
         </Button>
 
-        <XStack >
+        <XStack marginVertical="$2">
           <Paragraph color="$color" fontFamily="$body">Don't have an account? </Paragraph>
           <Button onPress={() => navigation.navigate('(auth)/SignUp')} chromeless>
             <Text fontWeight="bold" fontFamily="$body">Sign Up</Text>

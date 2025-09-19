@@ -5,15 +5,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { auth, db } from '../../firebaseConfig';
 import { useRouter } from 'expo-router';
-import { YStack, XStack, Text, ScrollView, styled } from 'tamagui'; // Keep ScrollView for the inner one
-import {
-  PrimaryButton,
-  GhostButton,
-  StyledButton,
-} from '../../components/Button';
-import { StyledInput } from '../../components/Input';
-import { Title, Subtitle, BodyText } from '../../components/Typography';
-import { StyledCheckbox } from '../../components/Checkbox';
+import { YStack, XStack, Text, ScrollView, H1, H3, Paragraph, Button, Input, Checkbox, styled } from 'tamagui'; // Keep ScrollView for the inner one
 import { DecorativeCircle } from 'components/DecorativeCircle';
 
 
@@ -102,71 +94,153 @@ export default function SignUpScreen() {
   };
 
   const renderRoleSelectionContent = () => ( // Renamed for clarity
-    <YStack flex={1} >
-      <Title mb="$2">BrightSprout</Title>
-      <Subtitle mb="$2">Choose Your Role</Subtitle>
-      <BodyText mb="$6">How will you be using the app?</BodyText>
+    <YStack flex={1} justifyContent="center" alignItems="center" space="$4">
+      <H1 color="$green10" fontFamily="$heading" marginBottom="$2">BrightSprout</H1>
+      <H3 color="$color" fontFamily="$heading" marginBottom="$1">Choose Your Role</H3>
+      <Paragraph color="$color" fontFamily="$body" marginBottom="$4">How will you be using the app?</Paragraph>
       
-      <PrimaryButton mb="$4" onPress={() => handleRoleSelect('Parent')}>
+      <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={() => handleRoleSelect('Parent')}>
         I am a Parent
-      </PrimaryButton>
-      <StyledButton mb="$4" onPress={() => handleRoleSelect('Learner')} disabled>
+      </Button>
+      <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={() => handleRoleSelect('Learner')} disabled>
         I am a Learner
-      </StyledButton>
-      <StyledButton mb="$4" onPress={() => handleRoleSelect('Teacher')} disabled>
+      </Button>
+      <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={() => handleRoleSelect('Teacher')} disabled>
         I am a Teacher
-      </StyledButton>
+      </Button>
 
-      <GhostButton mt="$4" onPress={() => router.push('/(auth)/Login')}>
-          <Text>Back to Login</Text>
-      </GhostButton>
+      <Button chromeless onPress={() => router.push('/(auth)/Login')}>
+          <Text fontFamily="$body">Back to Login</Text>
+      </Button>
     </YStack>
   );
 
   const renderParentFormContent = () => ( // Renamed and now returns YStack
-    <YStack flex={1}  >
-        <Subtitle  >Parent Sign Up</Subtitle>
-        <BodyText  >Create your account to get started.</BodyText>
+    <YStack flex={1} justifyContent="center" alignItems="center" space="$4">
+        <H3 color="$color" fontFamily="$heading" marginBottom="$1">Parent Sign Up</H3>
+        <Paragraph color="$color" fontFamily="$body" marginBottom="$4">Create your account to get started.</Paragraph>
 
-        <StyledInput placeholder="First Name" value={firstName} onChangeText={setFirstName} />
-        <StyledInput placeholder="Last Name" value={lastName} onChangeText={setLastName} />
-        <StyledInput placeholder="Email Address" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-        <StyledInput placeholder="Contact Number" value={contactNumber} onChangeText={setContactNumber} keyboardType="phone-pad" />
-        <StyledInput placeholder="Address" value={address} onChangeText={setAddress} />
-        <StyledInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-        <StyledInput placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+        <Input
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+          size="$4"
+          width="100%"
+          marginVertical="$2"
+          borderWidth={1}
+          borderColor="$borderColor"
+          fontFamily="$body"
+        />
+        <Input
+          placeholder="Last Name"
+          value={lastName}
+          onChangeText={setLastName}
+          size="$4"
+          width="100%"
+          marginVertical="$2"
+          borderWidth={1}
+          borderColor="$borderColor"
+          fontFamily="$body"
+        />
+        <Input
+          placeholder="Email Address"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          size="$4"
+          width="100%"
+          marginVertical="$2"
+          borderWidth={1}
+          borderColor="$borderColor"
+          fontFamily="$body"
+        />
+        <Input
+          placeholder="Contact Number"
+          value={contactNumber}
+          onChangeText={setContactNumber}
+          keyboardType="phone-pad"
+          size="$4"
+          width="100%"
+          marginVertical="$2"
+          borderWidth={1}
+          borderColor="$borderColor"
+          fontFamily="$body"
+        />
+        <Input
+          placeholder="Address"
+          value={address}
+          onChangeText={setAddress}
+          size="$4"
+          width="100%"
+          marginVertical="$2"
+          borderWidth={1}
+          borderColor="$borderColor"
+          fontFamily="$body"
+        />
+        <Input
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          size="$4"
+          width="100%"
+          marginVertical="$2"
+          borderWidth={1}
+          borderColor="$borderColor"
+          fontFamily="$body"
+        />
+        <Input
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+          size="$4"
+          width="100%"
+          marginVertical="$2"
+          borderWidth={1}
+          borderColor="$borderColor"
+          fontFamily="$body"
+        />
 
-        <XStack width="100%" >
-            <StyledCheckbox checked={termsAccepted} onCheckedChange={() => setTermsAccepted(!termsAccepted)}>
-                <StyledCheckbox.Indicator />
-            </StyledCheckbox>
-            <BodyText >I agree to the Terms and Conditions</BodyText>
+        <XStack width="100%" marginVertical="$2" alignItems="center">
+            <Checkbox checked={termsAccepted} onCheckedChange={() => setTermsAccepted(!termsAccepted)} size="$4">
+                <Checkbox.Indicator />
+            </Checkbox>
+            <Paragraph color="$color" fontFamily="$body" marginLeft="$2">I agree to the Terms and Conditions</Paragraph>
         </XStack>
 
-        {error ? <BodyText color="$red10" >{error}</BodyText> : null}
+        {error ? <Paragraph color="$red10" marginVertical="$2">{error}</Paragraph> : null}
 
-        <PrimaryButton onPress={handleSignUp}>
+        <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleSignUp} marginVertical="$2">
           Create Account
-        </PrimaryButton>
+        </Button>
 
-        <GhostButton  onPress={() => setStep('roleSelection')}>
-          <Text>Back to Role Selection</Text>
-        </GhostButton>
+        <Button chromeless onPress={() => setStep('roleSelection')} marginVertical="$2">
+          <Text fontFamily="$body">Back to Role Selection</Text>
+        </Button>
     </YStack>
   );
 
   return (
-    <SignUpContainer> {/* No contentContainerStyle here, as it's a YStack */}
-      <StatusBar barStyle="dark-content" />
-      <DecorativeCircle width={200} height={200} />
-      <DecorativeCircle width={150} height={150} opacity={0.15}  />
-      <DecorativeCircle width={80} height={80} opacity={0.08}   />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        {/* The ScrollView is now inside KeyboardAvoidingView */}
-        <ScrollView contentContainerStyle={{ flex: 1 }}>
-          {step === 'roleSelection' ? renderRoleSelectionContent() : renderParentFormContent()}
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SignUpContainer>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" backgroundColor="$background">
+        <StatusBar barStyle="dark-content" />
+        {/* Background circles */}
+        <YStack position="absolute" width={200} height={200} top={-50} left={-80} opacity={0.1} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={150} height={150} bottom={-60} right={-70} opacity={0.15} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={80} height={80} top="30%" right={-30} opacity={0.08} backgroundColor="$green8" borderRadius={1000} />
+
+        <YStack overflow="hidden" width="100%" maxWidth={400} space="$4">
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+            {step === 'roleSelection' ? renderRoleSelectionContent() : renderParentFormContent()}
+          </ScrollView>
+        </YStack>
+      </YStack>
+    </KeyboardAvoidingView>
   );
 }
+

@@ -10,6 +10,7 @@ import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
 import { useTheme } from 'tamagui'
 import { onAuthStateChanged, User } from 'firebase/auth'
+import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -99,32 +100,34 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <Stack>
-        <Stack.Screen name="(auth)/Login" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/SignUp" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/ForgotPasswordScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="Home" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: false,
-          }}
-        />
+      <SafeAreaView style={{ flex: 1 }}> {/* Wrap with SafeAreaView */}
+        <Stack>
+          <Stack.Screen name="(auth)/Login" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)/SignUp" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)/ForgotPasswordScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="Home" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
 
-        <Stack.Screen
-          name="modal"
-          options={{
-            title: 'Tamagui + Expo',
-            presentation: 'modal',
-            animation: 'slide_from_right',
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-            contentStyle: {
-              backgroundColor: theme.background.val,
-            },
-          }}
-        />
-      </Stack>
+          <Stack.Screen
+            name="modal"
+            options={{
+              title: 'Tamagui + Expo',
+              presentation: 'modal',
+              animation: 'slide_from_right',
+              gestureEnabled: true,
+              gestureDirection: 'horizontal',
+              contentStyle: {
+                backgroundColor: theme.background.val,
+              },
+            }}
+          />
+        </Stack>
+      </SafeAreaView>
     </ThemeProvider>
   )
 }

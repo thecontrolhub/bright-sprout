@@ -28,37 +28,39 @@ export default function ForgotPasswordScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <YStack flex={1} overflow="hidden"  >
+      <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" backgroundColor="$background">
         <StatusBar barStyle="dark-content" />
-        {/* Background circles - kept as Views for now */}
-        <View style={{ position: 'absolute', width: 200, height: 200, top: -50, left: -80, opacity: 0.1, backgroundColor: '$green8', borderRadius: 1000 }} />
-        <View style={{ position: 'absolute', width: 150, height: 150, bottom: -60, right: -70, opacity: 0.15, backgroundColor: '$green8', borderRadius: 1000 }} />
-        <View style={{ position: 'absolute', width: 80, height: 80, top: '30%', right: -30, opacity: 0.08, backgroundColor: '$green8', borderRadius: 1000 }} />
+        {/* Background circles */}
+        <YStack position="absolute" width={200} height={200} top={-50} left={-80} opacity={0.1} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={150} height={150} bottom={-60} right={-70} opacity={0.15} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={80} height={80} top="30%" right={-30} opacity={0.08} backgroundColor="$green8" borderRadius={1000} />
 
-        <H3 color="$color" fontFamily="$heading">Reset Password</H3>
-        <Paragraph color="$color" fontFamily="$body">Enter your email to receive a reset link.</Paragraph>
+        <YStack overflow="hidden" width="100%" maxWidth={400} space="$4">
+          <H3 color="$color" fontFamily="$heading" marginBottom="$1">Reset Password</H3>
+          <Paragraph color="$color" fontFamily="$body" marginBottom="$4">Enter your email to receive a reset link.</Paragraph>
 
-        <Input
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          size="$4"
-          width="100%"
+          <Input
+            placeholder="Email Address"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            size="$4"
+            width="100%"
+            marginVertical="$2"
+            borderWidth={1}
+            borderColor="$borderColor"
+            fontFamily="$body"
+          />
 
-          borderWidth={1}
-          borderColor="$borderColor"
-          fontFamily="$body"
-        />
+          <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleResetPassword} fontFamily="$body" marginVertical="$2">
+            Send Reset Link
+          </Button>
 
-        <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleResetPassword}  fontFamily="$body">
-          Send Reset Link
-        </Button>
-
-        <Button onPress={() => navigation.goBack()} chromeless >
-          <Text  fontWeight="bold" fontFamily="$body">Back to Login</Text>
-        </Button>
+          <Button onPress={() => navigation.goBack()} chromeless marginVertical="$2">
+            <Text fontWeight="bold" fontFamily="$body">Back to Login</Text>
+          </Button>
+        </YStack>
       </YStack>
     </KeyboardAvoidingView>
   );
