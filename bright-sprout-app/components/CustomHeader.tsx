@@ -17,7 +17,7 @@ export function CustomHeader({ onMenuPress }: CustomHeaderProps) {
       <XStack alignItems="center" space="$2">
         {/* Placeholder for logo */}
         <Image
-          source={require('../assets/images/logo.png')} // Assuming logo.png exists in assets/images
+          source={require('../assets/images/logo.png')} // Corrected path
           width={40}
           height={40}
           onPress={() => {

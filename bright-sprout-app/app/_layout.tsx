@@ -1,8 +1,9 @@
+import { SidebarProvider, useSidebar } from './SidebarContext';
 import { useEffect, useState, ReactNode } from 'react'
 import { app, auth, db } from '../firebaseConfig';
 import { useColorScheme } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import {  ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
@@ -14,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAre
 import { CustomHeader } from '../components/CustomHeader';
 import { Sidebar } from '../components/Sidebar';
 import { useAuth, AuthContext } from '../hooks/useAuth';
+
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -101,7 +103,9 @@ export default function RootLayout() {
   return (
     <Providers>
       <AuthStatusProvider>
-        <RootLayoutNav />
+        <SidebarProvider>
+          <RootLayoutNav />
+        </SidebarProvider>
       </AuthStatusProvider>
     </Providers>
   )
@@ -123,10 +127,11 @@ function RootLayoutNav() {
   const segments = useSegments();
   const router = useRouter();
   const hideHeader = segments[0] === '(auth)';
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { userProfile, isLoading } = useAuth();
-
+console.log(colorScheme)
   const handleMenuPress = () => {
+    console.log("handleMenuPress called: Opening sidebar");
     setSidebarOpen(true);
   };
 
@@ -145,7 +150,19 @@ function RootLayoutNav() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider
+      value={{
+        dark: colorScheme === 'dark',
+        colors: {
+          primary: theme.primary.get(), // Using Tamagui's primary color
+          background: theme.bg.get(), // Using Tamagui's background color
+          card: theme.card.get(), // Using Tamagui's card color
+          text: theme.color.get(),
+          border: theme.borderColor.get(),
+          notification: theme.red10.get(), // Assuming red for notifications
+        },
+      }}
+    >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <SafeAreaView style={{ flex: 1 }}>
         {!hideHeader && <CustomHeader onMenuPress={handleMenuPress} />}
