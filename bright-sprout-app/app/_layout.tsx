@@ -171,6 +171,13 @@ console.log(colorScheme)
           <Stack.Screen name="(auth)/SignUp" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/ForgotPasswordScreen" options={{ headerShown: false }} />
           <Stack.Screen name="Home" options={{ headerShown: false }}/>
+          <Stack.Screen name="AddChildScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="ManageChildrenScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="EditChildScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="EditProfileScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="ProfileScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="SettingsScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="ChangePasswordScreen" options={{ headerShown: false }} />
           <Stack.Screen
             name="(tabs)"
           />
