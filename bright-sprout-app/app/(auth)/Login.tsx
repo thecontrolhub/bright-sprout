@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { View, Alert, StatusBar, Platform, KeyboardAvoidingView } from 'react-native';
 import { signInWithEmailAndPassword, signInWithCustomToken } from 'firebase/auth';
-import { auth, db } from '../firebaseConfig'; // Import db
+import { auth, db } from '../../firebaseConfig'; // Import db
 import { getDocs, collection, query, where } from 'firebase/firestore'; // Import firestore functions
 import { useNavigation } from 'expo-router'; // Use useNavigation from expo-router
 import { StackNavigationProp } from '@react-navigation/stack'; // Use StackNavigationProp
 import { YStack, H1, H3, Paragraph, Input, Button, XStack, Text } from 'tamagui';
 
 type RootStackParamList = {
-  Login: undefined;
+  '(auth)/Login': undefined;
+  '(auth)/SignUp': undefined;
+  '(auth)/ForgotPasswordScreen': undefined;
   Home: undefined;
-  SignUp: undefined;
-  ForgotPassword: undefined;
 };
 
-type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, '(auth)/Login'>;
 
 export default function LoginScreen() {
   const [identifier, setIdentifier] = useState(''); // Can be email or username
@@ -87,7 +87,7 @@ export default function LoginScreen() {
         />
 
         <Button
-          onPress={() => navigation.navigate('ForgotPassword' as any)}
+          onPress={() => navigation.navigate('(auth)/ForgotPasswordScreen')}
           chromeless
           alignSelf="flex-end"
           marginBottom="$3"
@@ -101,7 +101,7 @@ export default function LoginScreen() {
 
         <XStack marginTop="$6">
           <Paragraph color="$color" fontFamily="$body">Don't have an account? </Paragraph>
-          <Button onPress={() => navigation.navigate('SignUp')} chromeless padding="$0">
+          <Button onPress={() => navigation.navigate('(auth)/SignUp')} chromeless padding="$0">
             <Text color="$accent" fontWeight="bold" fontFamily="$body">Sign Up</Text>
           </Button>
         </XStack>

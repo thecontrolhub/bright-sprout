@@ -3,19 +3,19 @@ import { View, Alert, StatusBar, Platform, KeyboardAvoidingView } from 'react-na
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { auth, db } from '../firebaseConfig';
+import { auth, db } from '../../firebaseConfig';
 import { useNavigation } from 'expo-router';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { YStack, H1, H3, Paragraph, Input, Button, XStack, Text, ScrollView, Checkbox } from 'tamagui';
 
 type RootStackParamList = {
-  Login: undefined;
+  '(auth)/Login': undefined;
+  '(auth)/SignUp': undefined;
   Home: undefined;
-  SignUp: undefined;
-  ForgotPassword: undefined;
+  // ForgotPassword: undefined;
 };
 
-type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignUp'>;
+type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, '(auth)/SignUp'>;
 
 type Role = 'Parent' | 'Learner' | 'Teacher';
 
@@ -98,21 +98,21 @@ export default function SignUpScreen() {
 
   const renderRoleSelection = () => (
     <YStack flex={1} justifyContent="center" alignItems="center" paddingHorizontal="$4">
-      <H1 color="$green10" marginBottom="$2" fontFamily="$heading">BrightSprout</H1>
-      <H3 color="$color" marginBottom="$2" fontFamily="$heading">Choose Your Role</H3>
-      <Paragraph color="$color" marginBottom="$6" textAlign="center" fontFamily="$body">How will you be using the app?</Paragraph>
+      <H1 color="$green10" mb="$2" fontFamily="$heading">BrightSprout</H1>
+      <H3 color="$color" mb="$2" fontFamily="$heading">Choose Your Role</H3>
+      <Paragraph color="$color" mb="$6" textAlign="center" fontFamily="$body">How will you be using the app?</Paragraph>
       
-      <Button size="$4" width="100%" marginBottom="$4" onPress={() => handleRoleSelect('Parent')} backgroundColor="$primary" color="$color" fontWeight="bold" fontFamily="$body">
+      <Button size="$4" width="100%" mb="$4" onPress={() => handleRoleSelect('Parent')} backgroundColor="$primary" color="$color" fontWeight="bold" fontFamily="$body">
         I am a Parent
       </Button>
-      <Button size="$4" width="100%" marginBottom="$4" onPress={() => handleRoleSelect('Learner')} disabled fontFamily="$body">
+      <Button size="$4" width="100%" mb="$4" onPress={() => handleRoleSelect('Learner')} disabled fontFamily="$body">
         I am a Learner
       </Button>
-      <Button size="$4" width="100%" marginBottom="$4" onPress={() => handleRoleSelect('Teacher')} disabled fontFamily="$body">
+      <Button size="$4" width="100%" mb="$4" onPress={() => handleRoleSelect('Teacher')} disabled fontFamily="$body">
         I am a Teacher
       </Button>
 
-      <Button onPress={() => navigation.navigate('Login')} chromeless marginTop="$4">
+      <Button onPress={() => navigation.navigate('(auth)/Login')} chromeless mt="$4">
           <Text color="$accent" fontWeight="bold" fontFamily="$body">Back to Login</Text>
       </Button>
     </YStack>
@@ -151,12 +151,12 @@ export default function SignUpScreen() {
   );
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <YStack flex={1} backgroundColor="$backgroundFocus" overflow="hidden">
         <StatusBar barStyle="dark-content" />
-        <View style={{ position: 'absolute', width: 200, height: 200, top: -50, left: -80, opacity: 0.1, backgroundColor: '$green8', borderRadius: 1000 }} />
-        <View style={{ position: 'absolute', width: 150, height: 150, bottom: -60, right: -70, opacity: 0.15, backgroundColor: '$green8', borderRadius: 1000 }} />
-        <View style={{ position: 'absolute', width: 80, height: 80, top: '30%', right: -30, opacity: 0.08, backgroundColor: '$green8', borderRadius: 1000 }} />
+        <YStack position="absolute" width={200} height={200} top={-50} left={-80} opacity={0.1} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={150} height={150} bottom={-60} right={-70} opacity={0.15} backgroundColor="$green8" borderRadius={1000} />
+        <YStack position="absolute" width={80} height={80} top="30%" right={-30} opacity={0.08} backgroundColor="$green8" borderRadius={1000} />
         {step === 'roleSelection' ? renderRoleSelection() : renderParentForm()}
       </YStack>
     </KeyboardAvoidingView>
