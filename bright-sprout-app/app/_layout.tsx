@@ -8,6 +8,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
+import { ChildProvider } from './ChildContext'
 import { useTheme } from 'tamagui'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
@@ -91,7 +92,13 @@ export default function RootLayout() {
 }
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
-  return <Provider>{children}</Provider>
+  return (
+    <Provider>
+      <ChildProvider>
+        {children}
+      </ChildProvider>
+    </Provider>
+  )
 }
 
 function RootLayoutNav() {
