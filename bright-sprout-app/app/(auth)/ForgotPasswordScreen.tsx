@@ -28,15 +28,15 @@ export default function ForgotPasswordScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <YStack flex={1} backgroundColor="$backgroundFocus" overflow="hidden" alignItems="center" justifyContent="center" paddingHorizontal="$4">
+      <YStack flex={1} overflow="hidden"  >
         <StatusBar barStyle="dark-content" />
         {/* Background circles - kept as Views for now */}
         <View style={{ position: 'absolute', width: 200, height: 200, top: -50, left: -80, opacity: 0.1, backgroundColor: '$green8', borderRadius: 1000 }} />
         <View style={{ position: 'absolute', width: 150, height: 150, bottom: -60, right: -70, opacity: 0.15, backgroundColor: '$green8', borderRadius: 1000 }} />
         <View style={{ position: 'absolute', width: 80, height: 80, top: '30%', right: -30, opacity: 0.08, backgroundColor: '$green8', borderRadius: 1000 }} />
 
-        <H3 color="$color" marginBottom="$2" fontFamily="$heading">Reset Password</H3>
-        <Paragraph color="$color" marginBottom="$6" textAlign="center" fontFamily="$body">Enter your email to receive a reset link.</Paragraph>
+        <H3 color="$color" fontFamily="$heading">Reset Password</H3>
+        <Paragraph color="$color" fontFamily="$body">Enter your email to receive a reset link.</Paragraph>
 
         <Input
           placeholder="Email Address"
@@ -46,18 +46,18 @@ export default function ForgotPasswordScreen() {
           autoCapitalize="none"
           size="$4"
           width="100%"
-          marginBottom="$3"
+
           borderWidth={1}
           borderColor="$borderColor"
           fontFamily="$body"
         />
 
-        <Button size="$4" width="100%" backgroundColor="$primary" color="$color" fontWeight="bold" onPress={handleResetPassword} marginTop="$4" fontFamily="$body">
+        <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleResetPassword}  fontFamily="$body">
           Send Reset Link
         </Button>
 
-        <Button onPress={() => navigation.goBack()} chromeless marginTop="$6">
-          <Text color="$accent" fontWeight="bold" fontFamily="$body">Back to Login</Text>
+        <Button onPress={() => navigation.goBack()} chromeless >
+          <Text  fontWeight="bold" fontFamily="$body">Back to Login</Text>
         </Button>
       </YStack>
     </KeyboardAvoidingView>

@@ -1,17 +1,18 @@
 import React from 'react';
-import { YStack, H1, Paragraph } from 'tamagui';
-import { Button } from 'tamagui';
-import { useNavigation } from 'expo-router';
+import { YStack } from 'tamagui';
+import { useRouter } from 'expo-router';
 import { getAuth, signOut } from 'firebase/auth';
+import { DestructiveButton } from '../components/Button';
+import { Title, BodyText } from '../components/Typography';
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const router = useRouter();
   const auth = getAuth();
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Login');
+      router.replace('/(auth)/Login');
     } catch (error) {
       console.error("Logout error:", error);
       // Optionally, show an alert to the user
@@ -19,12 +20,12 @@ export default function HomeScreen() {
   };
 
   return (
-    <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="$background">
-      <H1 color="$green10" marginBottom="$2">Welcome Home!</H1>
-      <Paragraph color="$color" marginBottom="$4">You are successfully logged in.</Paragraph>
-      <Button onPress={handleLogout} size="$4" backgroundColor="$red10" color="$color" fontWeight="bold">
+    <YStack flex={1}  >
+      <Title >Welcome Home!</Title>
+      <BodyText >You are successfully logged in.</BodyText>
+      <DestructiveButton onPress={handleLogout}>
         Logout
-      </Button>
+      </DestructiveButton>
     </YStack>
   );
 }
