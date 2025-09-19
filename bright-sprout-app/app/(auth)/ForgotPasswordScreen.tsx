@@ -3,10 +3,13 @@ import { View, Alert, StatusBar, Platform, KeyboardAvoidingView } from 'react-na
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth, db } from '../../firebaseConfig'; 
 import { useNavigation } from 'expo-router';
-import { YStack, H3, Paragraph, Input, Button, Text } from 'tamagui';
+import { YStack, H3, Paragraph, Text } from 'tamagui'; // Removed Input, Button
+import { PrimaryButton, GhostButton } from '../../components/StyledButton'; // New import
+import { StyledInput } from '../../components/StyledInput'; // New import
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false); // New state
   const navigation = useNavigation();
 
   const handleResetPassword = async () => {
@@ -14,12 +17,15 @@ export default function ForgotPasswordScreen() {
       Alert.alert('Missing Email', 'Please enter your email address.');
       return;
     }
+    setLoading(true); // Set loading to true
     try {
       await sendPasswordResetEmail(auth, email);
       Alert.alert('Check Your Email', 'A password reset link has been sent to your email address.');
       navigation.goBack();
     } catch (error: any) {
       Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false); // Set loading to false regardless of success or failure
     }
   };
 
@@ -39,58 +45,21 @@ export default function ForgotPasswordScreen() {
           <H3 color="$color" fontFamily="$heading" marginBottom="$1">Reset Password</H3>
           <Paragraph color="$color" fontFamily="$body" marginBottom="$4">Enter your email to receive a reset link.</Paragraph>
 
-          <Input
+          <StyledInput
             placeholder="Email Address"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
-            size="$4"
-            width="100%"
-            marginVertical="$2"
-            borderWidth={1}
-            borderColor="$borderColor"
-            borderRadius="$4" // Added borderRadius
-            paddingHorizontal="$3" // Added paddingHorizontal
-            paddingVertical="$3" // Added paddingVertical
-            backgroundColor="$background" // Explicit background color
-            placeholderTextColor="$color" // Theme-aware placeholder text color
-            fontFamily="$body"
           />
 
-          <Button
-            size="$4"
-            width="100%"
-            backgroundColor="$primary" // Use a primary brand color
-            color="white" // Ensure text is visible on primary background
-            fontWeight="bold"
-            onPress={handleResetPassword}
-            fontFamily="$body"
-            marginVertical="$2"
-            borderRadius="$4" // Consistent border radius
-            paddingHorizontal="$4" // Consistent padding
-            paddingVertical="$3" // Consistent padding
-            // Add subtle shadow for depth
-            shadowColor="$shadowColor"
-            shadowOffset={{ width: 0, height: 2 }}
-            shadowOpacity={0.25}
-            shadowRadius={3.84}
-            elevation={5}
-          >
-            Send Reset Link
-          </Button>
+          <PrimaryButton onPress={handleResetPassword} disabled={loading}>
+            {loading ? 'Sending...' : 'Send Reset Link'}
+          </PrimaryButton>
 
-          <Button
-            onPress={() => navigation.goBack()}
-            chromeless
-            marginVertical="$2"
-            // Ensure text is bold and uses primary color for emphasis
-            color="$primary"
-            fontWeight="bold"
-            fontFamily="$body"
-          >
+          <GhostButton onPress={() => navigation.goBack()}>
             Back to Login
-          </Button>
+          </GhostButton>
         </YStack>
       </YStack>
     </KeyboardAvoidingView>

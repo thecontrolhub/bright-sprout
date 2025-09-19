@@ -8,18 +8,6 @@ export const StyledButton = styled(Button, {
   width: '100%',
 });
 
-export const PrimaryButton = styled(StyledButton, {
-  name: 'PrimaryButton',
- 
-  color: '$color',
-  pressTheme: true,
-});
-
-export const GhostButton = styled(StyledButton, {
-  name: 'GhostButton',
-  chromeless: true,
-});
-
 export const DestructiveButton = styled(StyledButton, {
   name: 'DestructiveButton',
   color: '$color',

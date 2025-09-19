@@ -5,11 +5,14 @@ import { doc, setDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { auth, db } from '../../firebaseConfig';
 import { useRouter } from 'expo-router';
-import { YStack, XStack, Text, ScrollView, H1, H3, Paragraph, Button, Input, Checkbox, styled } from 'tamagui'; // Keep ScrollView for the inner one
+import { YStack, XStack, Text, ScrollView, H1, H3, Paragraph, Checkbox, styled } from 'tamagui'; // Re-added styled
+import { PrimaryButton, GhostButton } from '../../components/StyledButton';
+import { StyledInput } from '../../components/StyledInput';
+// Removed import { StyledForm } from '../../components/StyledForm';
 import { DecorativeCircle } from 'components/DecorativeCircle';
 
 
-const SignUpContainer = styled(YStack, { // Changed to YStack
+const SignUpContainer = styled(YStack, { // Re-added SignUpContainer
   name: 'SignUpContainer',
   flex: 1,
   overflow: 'hidden',
@@ -19,6 +22,7 @@ type Role = 'Parent' | 'Learner' | 'Teacher';
 export default function SignUpScreen() {
   const [step, setStep] = useState('roleSelection');
   const [role, setRole] = useState<Role | null>(null);
+  const [loading, setLoading] = useState(false); // New state
 
   // Form fields
   const [email, setEmail] = useState('');
@@ -53,6 +57,8 @@ export default function SignUpScreen() {
       setError('You must accept the terms and conditions to continue.');
       return;
     }
+
+    setLoading(true); // Set loading to true
 
     try {
       // Create user in Firebase Auth
@@ -90,6 +96,8 @@ export default function SignUpScreen() {
         } else {
             setError(error.message);
         }
+    } finally {
+      setLoading(false); // Set loading to false regardless of success or failure
     }
   };
 
@@ -99,64 +107,19 @@ export default function SignUpScreen() {
       <H3 color="$color" fontFamily="$heading" marginBottom="$1">Choose Your Role</H3>
       <Paragraph color="$color" fontFamily="$body" marginBottom="$4">How will you be using the app?</Paragraph>
       
-      <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={() => handleRoleSelect('Parent')}>
+      <PrimaryButton onPress={() => handleRoleSelect('Parent')} disabled={loading}>
         I am a Parent
-      </Button>
-      <Button
-        size="$4"
-        width="100%"
-        backgroundColor="$primary" // Use a primary brand color
-        color="white" // Ensure text is visible on primary background
-        fontWeight="bold"
-        onPress={() => handleRoleSelect('Learner')}
-        fontFamily="$body"
-        marginVertical="$2" // Added marginVertical for consistency
-        borderRadius="$4" // Consistent border radius
-        paddingHorizontal="$4" // Consistent padding
-        paddingVertical="$3" // Consistent padding
-        // Add subtle shadow for depth
-        shadowColor="$shadowColor"
-        shadowOffset={{ width: 0, height: 2 }}
-        shadowOpacity={0.25}
-        shadowRadius={3.84}
-        elevation={5}
-      >
+      </PrimaryButton>
+      <PrimaryButton onPress={() => handleRoleSelect('Learner')} disabled={loading}>
         I am a Learner
-      </Button>
-      <Button
-        size="$4"
-        width="100%"
-        backgroundColor="$primary" // Use a primary brand color
-        color="white" // Ensure text is visible on primary background
-        fontWeight="bold"
-        onPress={() => handleRoleSelect('Teacher')}
-        fontFamily="$body"
-        marginVertical="$2" // Added marginVertical for consistency
-        borderRadius="$4" // Consistent border radius
-        paddingHorizontal="$4" // Consistent padding
-        paddingVertical="$3" // Consistent padding
-        // Add subtle shadow for depth
-        shadowColor="$shadowColor"
-        shadowOffset={{ width: 0, height: 2 }}
-        shadowOpacity={0.25}
-        shadowRadius={3.84}
-        elevation={5}
-        disabled
-      >
+      </PrimaryButton>
+      <PrimaryButton onPress={() => handleRoleSelect('Teacher')} disabled={loading}>
         I am a Teacher
-      </Button>
+      </PrimaryButton>
 
-      <Button
-        chromeless
-        onPress={() => router.push('/(auth)/Login')}
-        // Ensure text is bold and uses primary color for emphasis
-        color="$primary"
-        fontWeight="bold"
-        fontFamily="$body"
-        marginVertical="$2" // Added marginVertical for consistency
-      >
-        Back to Login
-      </Button>
+      <GhostButton onPress={() => router.push('/(auth)/Login')}>
+          Back to Login
+      </GhostButton>
     </YStack>
   );
 
@@ -165,123 +128,13 @@ export default function SignUpScreen() {
         <H3 color="$color" fontFamily="$heading" marginBottom="$1">Parent Sign Up</H3>
         <Paragraph color="$color" fontFamily="$body" marginBottom="$4">Create your account to get started.</Paragraph>
 
-        <Input
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-          size="$4"
-          width="100%"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderColor"
-          borderRadius="$4" // Added borderRadius
-          paddingHorizontal="$3" // Added paddingHorizontal
-          paddingVertical="$3" // Added paddingVertical
-          backgroundColor="$background" // Explicit background color
-          placeholderTextColor="$color" // Theme-aware placeholder text color
-          fontFamily="$body"
-        />
-        <Input
-          placeholder="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-          size="$4"
-          width="100%"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderColor"
-          borderRadius="$4" // Added borderRadius
-          paddingHorizontal="$3" // Added paddingHorizontal
-          paddingVertical="$3" // Added paddingVertical
-          backgroundColor="$background" // Explicit background color
-          placeholderTextColor="$color" // Theme-aware placeholder text color
-          fontFamily="$body"
-        />
-        <Input
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          size="$4"
-          width="100%"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderColor"
-          borderRadius="$4" // Added borderRadius
-          paddingHorizontal="$3" // Added paddingHorizontal
-          paddingVertical="$3" // Added paddingVertical
-          backgroundColor="$background" // Explicit background color
-          placeholderTextColor="$color" // Theme-aware placeholder text color
-          fontFamily="$body"
-        />
-        <Input
-          placeholder="Contact Number"
-          value={contactNumber}
-          onChangeText={setContactNumber}
-          keyboardType="phone-pad"
-          size="$4"
-          width="100%"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderColor"
-          borderRadius="$4" // Added borderRadius
-          paddingHorizontal="$3" // Added paddingHorizontal
-          paddingVertical="$3" // Added paddingVertical
-          backgroundColor="$background" // Explicit background color
-          placeholderTextColor="$color" // Theme-aware placeholder text color
-          fontFamily="$body"
-        />
-        <Input
-          placeholder="Address"
-          value={address}
-          onChangeText={setAddress}
-          size="$4"
-          width="100%"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderColor"
-          borderRadius="$4" // Added borderRadius
-          paddingHorizontal="$3" // Added paddingHorizontal
-          paddingVertical="$3" // Added paddingVertical
-          backgroundColor="$background" // Explicit background color
-          placeholderTextColor="$color" // Theme-aware placeholder text color
-          fontFamily="$body"
-        />
-        <Input
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          size="$4"
-          width="100%"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderColor"
-          borderRadius="$4" // Added borderRadius
-          paddingHorizontal="$3" // Added paddingHorizontal
-          paddingVertical="$3" // Added paddingVertical
-          backgroundColor="$background" // Explicit background color
-          placeholderTextColor="$color" // Theme-aware placeholder text color
-          fontFamily="$body"
-        />
-        <Input
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-          size="$4"
-          width="100%"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderColor"
-          borderRadius="$4" // Added borderRadius
-          paddingHorizontal="$3" // Added paddingHorizontal
-          paddingVertical="$3" // Added paddingVertical
-          backgroundColor="$background" // Explicit background color
-          placeholderTextColor="$color" // Theme-aware placeholder text color
-          fontFamily="$body"
-        />
+        <StyledInput placeholder="First Name" value={firstName} onChangeText={setFirstName} />
+        <StyledInput placeholder="Last Name" value={lastName} onChangeText={setLastName} />
+        <StyledInput placeholder="Email Address" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+        <StyledInput placeholder="Contact Number" value={contactNumber} onChangeText={setContactNumber} keyboardType="phone-pad" />
+        <StyledInput placeholder="Address" value={address} onChangeText={setAddress} />
+        <StyledInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
+        <StyledInput placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
 
         <XStack width="100%" marginVertical="$2" alignItems="center">
             <Checkbox checked={termsAccepted} onCheckedChange={() => setTermsAccepted(!termsAccepted)} size="$4">
@@ -292,39 +145,13 @@ export default function SignUpScreen() {
 
         {error ? <Paragraph color="$red10" marginVertical="$2">{error}</Paragraph> : null}
 
-        <Button
-          size="$4"
-          width="100%"
-          backgroundColor="$primary" // Use a primary brand color
-          color="white" // Ensure text is visible on primary background
-          fontWeight="bold"
-          onPress={handleSignUp}
-          fontFamily="$body"
-          marginVertical="$2"
-          borderRadius="$4" // Consistent border radius
-          paddingHorizontal="$4" // Consistent padding
-          paddingVertical="$3" // Consistent padding
-          // Add subtle shadow for depth
-          shadowColor="$shadowColor"
-          shadowOffset={{ width: 0, height: 2 }}
-          shadowOpacity={0.25}
-          shadowRadius={3.84}
-          elevation={5}
-        >
-          Create Account
-        </Button>
+        <PrimaryButton onPress={handleSignUp} disabled={loading}>
+          {loading ? 'Creating Account...' : 'Create Account'}
+        </PrimaryButton>
 
-        <Button
-          chromeless
-          onPress={() => setStep('roleSelection')}
-          marginVertical="$2"
-          // Ensure text is bold and uses primary color for emphasis
-          color="$primary"
-          fontWeight="bold"
-          fontFamily="$body"
-        >
+        <GhostButton onPress={() => setStep('roleSelection')}>
           Back to Role Selection
-        </Button>
+        </GhostButton>
     </YStack>
   );
 
@@ -340,7 +167,7 @@ export default function SignUpScreen() {
         <YStack position="absolute" width={150} height={150} bottom={-60} right={-70} opacity={0.15} backgroundColor="$green8" borderRadius={1000} />
         <YStack position="absolute" width={80} height={80} top="30%" right={-30} opacity={0.08} backgroundColor="$green8" borderRadius={1000} />
 
-        <YStack overflow="hidden" width="100%" maxWidth={400} space="$4">
+        <YStack overflow="hidden" width="100%" maxWidth={400} space="$4"> {/* Reverted from StyledForm */}
           <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
             {step === 'roleSelection' ? renderRoleSelectionContent() : renderParentFormContent()}
           </ScrollView>
@@ -349,4 +176,3 @@ export default function SignUpScreen() {
     </KeyboardAvoidingView>
   );
 }
-
