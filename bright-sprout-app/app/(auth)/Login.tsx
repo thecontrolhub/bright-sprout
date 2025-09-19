@@ -131,8 +131,8 @@ export default function LoginScreen() {
           Login
         </Button>
 
-        <XStack marginVertical="$2">
-          <Paragraph color="$color" fontFamily="$body">Don't have an account? </Paragraph>
+        <XStack marginVertical="$2" alignItems="center">
+          <Paragraph color="$color" fontFamily="$body">Don't have an account?</Paragraph>
           <Button
             onPress={() => navigation.navigate('(auth)/SignUp')}
             chromeless
