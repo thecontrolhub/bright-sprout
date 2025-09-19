@@ -9,9 +9,10 @@ import { useFonts } from 'expo-font'
 import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
 import { ChildProvider } from './ChildContext'
-import { useTheme } from 'tamagui'
+import { useTheme, YStack } from 'tamagui'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
+import { CustomHeader } from '../components/CustomHeader';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -104,20 +105,20 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 function RootLayoutNav() {
   const colorScheme = useColorScheme()
   const theme = useTheme()
+  const segments = useSegments();
+  const hideHeader = segments[0] === '(auth)';
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <SafeAreaView style={{ flex: 1 }}> {/* Wrap with SafeAreaView */}
+      <SafeAreaView style={{ flex: 1 }}>
         <Stack>
           <Stack.Screen name="(auth)/Login" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/SignUp" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/ForgotPasswordScreen" options={{ headerShown: false }} />
-          <Stack.Screen name="Home" options={{ headerShown: false }} />
+          <Stack.Screen name="Home" />
           <Stack.Screen
             name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
           />
 
           <Stack.Screen
