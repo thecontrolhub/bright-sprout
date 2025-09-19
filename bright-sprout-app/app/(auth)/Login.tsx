@@ -19,6 +19,7 @@ type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, '(auth)
 export default function LoginScreen() {
   const [identifier, setIdentifier] = useState(''); // Can be email or username
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // New state
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
   const handleLogin = async () => {
@@ -71,6 +72,11 @@ export default function LoginScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
         <Input
@@ -83,6 +89,11 @@ export default function LoginScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
 
@@ -90,18 +101,47 @@ export default function LoginScreen() {
           onPress={() => navigation.navigate('(auth)/ForgotPasswordScreen')}
           chromeless
           marginVertical="$2"
+          // Ensure text is bold and uses primary color for emphasis
+          color="$primary"
+          fontWeight="bold"
+          fontFamily="$body"
         >
-          <Text fontFamily="$body">Forgot Password?</Text>
+          Forgot Password?
         </Button>
 
-        <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleLogin} fontFamily="$body" marginVertical="$2">
+        <Button
+          size="$4"
+          width="100%"
+          backgroundColor="$primary" // Use a primary brand color
+          color="white" // Ensure text is visible on primary background
+          fontWeight="bold"
+          onPress={handleLogin}
+          fontFamily="$body"
+          marginVertical="$2"
+          borderRadius="$4" // Consistent border radius
+          paddingHorizontal="$4" // Consistent padding
+          paddingVertical="$3" // Consistent padding
+          // Add subtle shadow for depth
+          shadowColor="$shadowColor"
+          shadowOffset={{ width: 0, height: 2 }}
+          shadowOpacity={0.25}
+          shadowRadius={3.84}
+          elevation={5}
+        >
           Login
         </Button>
 
         <XStack marginVertical="$2">
           <Paragraph color="$color" fontFamily="$body">Don't have an account? </Paragraph>
-          <Button onPress={() => navigation.navigate('(auth)/SignUp')} chromeless>
-            <Text fontWeight="bold" fontFamily="$body">Sign Up</Text>
+          <Button
+            onPress={() => navigation.navigate('(auth)/SignUp')}
+            chromeless
+            // Ensure text is bold and uses primary color for emphasis
+            color="$primary"
+            fontWeight="bold"
+            fontFamily="$body"
+          >
+            Sign Up
           </Button>
         </XStack>
       </YStack>

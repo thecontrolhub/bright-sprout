@@ -50,15 +50,46 @@ export default function ForgotPasswordScreen() {
             marginVertical="$2"
             borderWidth={1}
             borderColor="$borderColor"
+            borderRadius="$4" // Added borderRadius
+            paddingHorizontal="$3" // Added paddingHorizontal
+            paddingVertical="$3" // Added paddingVertical
+            backgroundColor="$background" // Explicit background color
+            placeholderTextColor="$color" // Theme-aware placeholder text color
             fontFamily="$body"
           />
 
-          <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleResetPassword} fontFamily="$body" marginVertical="$2">
+          <Button
+            size="$4"
+            width="100%"
+            backgroundColor="$primary" // Use a primary brand color
+            color="white" // Ensure text is visible on primary background
+            fontWeight="bold"
+            onPress={handleResetPassword}
+            fontFamily="$body"
+            marginVertical="$2"
+            borderRadius="$4" // Consistent border radius
+            paddingHorizontal="$4" // Consistent padding
+            paddingVertical="$3" // Consistent padding
+            // Add subtle shadow for depth
+            shadowColor="$shadowColor"
+            shadowOffset={{ width: 0, height: 2 }}
+            shadowOpacity={0.25}
+            shadowRadius={3.84}
+            elevation={5}
+          >
             Send Reset Link
           </Button>
 
-          <Button onPress={() => navigation.goBack()} chromeless marginVertical="$2">
-            <Text fontWeight="bold" fontFamily="$body">Back to Login</Text>
+          <Button
+            onPress={() => navigation.goBack()}
+            chromeless
+            marginVertical="$2"
+            // Ensure text is bold and uses primary color for emphasis
+            color="$primary"
+            fontWeight="bold"
+            fontFamily="$body"
+          >
+            Back to Login
           </Button>
         </YStack>
       </YStack>

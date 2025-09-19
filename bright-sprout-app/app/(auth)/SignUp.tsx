@@ -102,15 +102,60 @@ export default function SignUpScreen() {
       <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={() => handleRoleSelect('Parent')}>
         I am a Parent
       </Button>
-      <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={() => handleRoleSelect('Learner')} disabled>
+      <Button
+        size="$4"
+        width="100%"
+        backgroundColor="$primary" // Use a primary brand color
+        color="white" // Ensure text is visible on primary background
+        fontWeight="bold"
+        onPress={() => handleRoleSelect('Learner')}
+        fontFamily="$body"
+        marginVertical="$2" // Added marginVertical for consistency
+        borderRadius="$4" // Consistent border radius
+        paddingHorizontal="$4" // Consistent padding
+        paddingVertical="$3" // Consistent padding
+        // Add subtle shadow for depth
+        shadowColor="$shadowColor"
+        shadowOffset={{ width: 0, height: 2 }}
+        shadowOpacity={0.25}
+        shadowRadius={3.84}
+        elevation={5}
+      >
         I am a Learner
       </Button>
-      <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={() => handleRoleSelect('Teacher')} disabled>
+      <Button
+        size="$4"
+        width="100%"
+        backgroundColor="$primary" // Use a primary brand color
+        color="white" // Ensure text is visible on primary background
+        fontWeight="bold"
+        onPress={() => handleRoleSelect('Teacher')}
+        fontFamily="$body"
+        marginVertical="$2" // Added marginVertical for consistency
+        borderRadius="$4" // Consistent border radius
+        paddingHorizontal="$4" // Consistent padding
+        paddingVertical="$3" // Consistent padding
+        // Add subtle shadow for depth
+        shadowColor="$shadowColor"
+        shadowOffset={{ width: 0, height: 2 }}
+        shadowOpacity={0.25}
+        shadowRadius={3.84}
+        elevation={5}
+        disabled
+      >
         I am a Teacher
       </Button>
 
-      <Button chromeless onPress={() => router.push('/(auth)/Login')}>
-          <Text fontFamily="$body">Back to Login</Text>
+      <Button
+        chromeless
+        onPress={() => router.push('/(auth)/Login')}
+        // Ensure text is bold and uses primary color for emphasis
+        color="$primary"
+        fontWeight="bold"
+        fontFamily="$body"
+        marginVertical="$2" // Added marginVertical for consistency
+      >
+        Back to Login
       </Button>
     </YStack>
   );
@@ -129,6 +174,11 @@ export default function SignUpScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
         <Input
@@ -140,6 +190,11 @@ export default function SignUpScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
         <Input
@@ -153,6 +208,11 @@ export default function SignUpScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
         <Input
@@ -165,6 +225,11 @@ export default function SignUpScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
         <Input
@@ -176,6 +241,11 @@ export default function SignUpScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
         <Input
@@ -188,6 +258,11 @@ export default function SignUpScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
         <Input
@@ -200,6 +275,11 @@ export default function SignUpScreen() {
           marginVertical="$2"
           borderWidth={1}
           borderColor="$borderColor"
+          borderRadius="$4" // Added borderRadius
+          paddingHorizontal="$3" // Added paddingHorizontal
+          paddingVertical="$3" // Added paddingVertical
+          backgroundColor="$background" // Explicit background color
+          placeholderTextColor="$color" // Theme-aware placeholder text color
           fontFamily="$body"
         />
 
@@ -212,12 +292,38 @@ export default function SignUpScreen() {
 
         {error ? <Paragraph color="$red10" marginVertical="$2">{error}</Paragraph> : null}
 
-        <Button size="$4" width="100%" color="$color" fontWeight="bold" onPress={handleSignUp} marginVertical="$2">
+        <Button
+          size="$4"
+          width="100%"
+          backgroundColor="$primary" // Use a primary brand color
+          color="white" // Ensure text is visible on primary background
+          fontWeight="bold"
+          onPress={handleSignUp}
+          fontFamily="$body"
+          marginVertical="$2"
+          borderRadius="$4" // Consistent border radius
+          paddingHorizontal="$4" // Consistent padding
+          paddingVertical="$3" // Consistent padding
+          // Add subtle shadow for depth
+          shadowColor="$shadowColor"
+          shadowOffset={{ width: 0, height: 2 }}
+          shadowOpacity={0.25}
+          shadowRadius={3.84}
+          elevation={5}
+        >
           Create Account
         </Button>
 
-        <Button chromeless onPress={() => setStep('roleSelection')} marginVertical="$2">
-          <Text fontFamily="$body">Back to Role Selection</Text>
+        <Button
+          chromeless
+          onPress={() => setStep('roleSelection')}
+          marginVertical="$2"
+          // Ensure text is bold and uses primary color for emphasis
+          color="$primary"
+          fontWeight="bold"
+          fontFamily="$body"
+        >
+          Back to Role Selection
         </Button>
     </YStack>
   );
