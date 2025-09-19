@@ -1,7 +1,5 @@
-import '../tamagui-web.css'
-
-import { useEffect, useState } from 'react'
-import { app, auth } from '../firebaseConfig';
+import { useEffect, useState, ReactNode } from 'react'
+import { app, auth, db } from '../firebaseConfig';
 import { useColorScheme } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
@@ -10,9 +8,12 @@ import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
 import { ChildProvider } from './ChildContext'
 import { useTheme, YStack } from 'tamagui'
-import { onAuthStateChanged, User } from 'firebase/auth'
+import { onAuthStateChanged, User, signOut } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
 import { CustomHeader } from '../components/CustomHeader';
+import { Sidebar } from '../components/Sidebar';
+import { useAuth, AuthContext } from '../hooks/useAuth';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -29,13 +30,27 @@ SplashScreen.preventAutoHideAsync()
 
 function AuthStatusProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<any | null>(null); // Use 'any' for now, define UserProfile in useAuth.ts
   const [isLoading, setIsLoading] = useState(true);
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          setUserProfile({ uid: currentUser.uid, email: currentUser.email, ...userDocSnap.data() });
+        } else {
+          // If user document doesn't exist, create a basic profile
+          setUserProfile({ uid: currentUser.uid, email: currentUser.email, role: 'Parent' }); // Default to Parent
+        }
+      } else {
+        setUserProfile(null);
+      }
       setIsLoading(false);
     });
     return () => unsubscribe();
@@ -58,11 +73,11 @@ function AuthStatusProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoading, segments]);
 
-  if (isLoading) {
-    return null; // Or a loading spinner
-  }
-
-  return <>{children}</>;
+  return (
+    <AuthContext.Provider value={{ user, userProfile, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export default function RootLayout() {
@@ -103,15 +118,31 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme()
-  const theme = useTheme()
+  const colorScheme = useColorScheme();
+  const theme = useTheme();
   const segments = useSegments();
+  const router = useRouter();
   const hideHeader = segments[0] === '(auth)';
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { userProfile, isLoading } = useAuth();
 
   const handleMenuPress = () => {
-    console.log("Menu icon pressed!");
-    // Here you would typically open a sidebar or navigation drawer
+    setSidebarOpen(true);
   };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setSidebarOpen(false);
+      router.replace('/(auth)/Login');
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  if (isLoading) {
+    return null; // Or a loading indicator
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -129,19 +160,16 @@ function RootLayoutNav() {
 
           <Stack.Screen
             name="modal"
-            options={{
-              title: 'Tamagui + Expo',
-              presentation: 'modal',
-              animation: 'slide_from_right',
-              gestureEnabled: true,
-              gestureDirection: 'horizontal',
-              contentStyle: {
-                backgroundColor: theme.background.val,
-              },
-            }}
           />
         </Stack>
+
+        <Sidebar
+          open={sidebarOpen}
+          onOpenChange={setSidebarOpen}
+          userProfile={userProfile}
+          handleLogout={handleLogout}
+        />
       </SafeAreaView>
     </ThemeProvider>
-  )
+  );
 }

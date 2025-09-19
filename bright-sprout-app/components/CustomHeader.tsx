@@ -1,6 +1,5 @@
 import React from 'react';
 import { YStack, XStack, H3, Image } from 'tamagui';
-import { Menu } from '@tamagui/lucide-icons';
 
 interface CustomHeaderProps {
   onMenuPress?: () => void;
@@ -21,10 +20,12 @@ export function CustomHeader({ onMenuPress }: CustomHeaderProps) {
           source={require('../assets/images/logo.png')} // Assuming logo.png exists in assets/images
           width={40}
           height={40}
+          onPress={() => {
+            console.log("Logo pressed in CustomHeader!");
+            onMenuPress?.();
+          }}
         />
-        
       </XStack>
-      {onMenuPress && <Menu size={24} color="$color" onPress={onMenuPress} />}
     </XStack>
   );
 }
