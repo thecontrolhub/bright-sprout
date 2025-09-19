@@ -108,15 +108,21 @@ function RootLayoutNav() {
   const segments = useSegments();
   const hideHeader = segments[0] === '(auth)';
 
+  const handleMenuPress = () => {
+    console.log("Menu icon pressed!");
+    // Here you would typically open a sidebar or navigation drawer
+  };
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <SafeAreaView style={{ flex: 1 }}>
+        {!hideHeader && <CustomHeader onMenuPress={handleMenuPress} />}
         <Stack>
           <Stack.Screen name="(auth)/Login" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/SignUp" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/ForgotPasswordScreen" options={{ headerShown: false }} />
-          <Stack.Screen name="Home" />
+          <Stack.Screen name="Home" options={{ headerShown: false }}/>
           <Stack.Screen
             name="(tabs)"
           />

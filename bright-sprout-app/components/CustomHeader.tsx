@@ -24,7 +24,6 @@ export function CustomHeader({ onMenuPress }: CustomHeaderProps) {
         />
         
       </XStack>
-      {/* You can add more elements here, like a menu icon or user avatar */}
       {onMenuPress && <Menu size={24} color="$color" onPress={onMenuPress} />}
     </XStack>
   );
