@@ -126,6 +126,7 @@ function RootLayoutNav() {
   const hideHeader = segments[0] === '(auth)';
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { userProfile, isLoading } = useAuth();
+console.log("userProfile in RootLayoutNav:", userProfile);
 console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
 
   const handleMenuPress = () => {

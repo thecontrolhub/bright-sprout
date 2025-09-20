@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Bell, Lock, ChevronRight, HelpCircle, CreditCard } from '@tamagui/lucide-icons';
 import { YStack, XStack, Text, Switch, Button, ScrollView } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
 
@@ -16,8 +16,8 @@ export default function SettingsScreen() {
         <YStack space="$4">
           <Button
             onPress={() => router.push('/ChangePasswordScreen')}
-            icon={<Ionicons name="lock-closed-outline" size={28} color="$green9" />}
-            iconAfter={<Ionicons name="chevron-forward-outline" size={24} color="$gray8" />}
+            icon={<Lock size={28} color="$success" />}
+            iconAfter={<ChevronRight size={24} color="$gray8" />}
             justifyContent="space-between"
             width="100%"
             size="$4"
@@ -27,17 +27,19 @@ export default function SettingsScreen() {
           </Button>
           <XStack justifyContent="space-between" alignItems="center" width="100%" paddingVertical="$2">
             <XStack alignItems="center" space="$3">
-              <Ionicons name="notifications-outline" size={28} color="$green9" />
-              <Text fontSize="$6">Notifications</Text>
+              <Bell size={28} color="$success" />
+              <Text fontSize="$6" lineHeight="$6">Notifications</Text>
             </XStack>
-            <Switch checked={notificationsEnabled} onCheckedChange={setNotificationsEnabled}>
-              <Switch.Thumb animation="bouncy" />
-            </Switch>
+            <XStack alignItems="center"> {/* New XStack wrapper */}
+              <Switch checked={notificationsEnabled} onCheckedChange={setNotificationsEnabled} y={-1}> {/* Added y={-1} */}
+                <Switch.Thumb animation="bouncy" />
+              </Switch>
+            </XStack>
           </XStack>
           <Button
             onPress={() => Alert.alert('Help & Support', 'This feature is not yet implemented.')}
-            icon={<Ionicons name="help-circle-outline" size={28} color="$green9" />}
-            iconAfter={<Ionicons name="chevron-forward-outline" size={24} color="$gray8" />}
+            icon={<HelpCircle size={28} color="$success" />}
+            iconAfter={<ChevronRight size={24} color="$gray8" />}
             justifyContent="space-between"
             width="100%"
             size="$4"
@@ -48,8 +50,8 @@ export default function SettingsScreen() {
           {!activeChild && ( // Only show Banking Details if no active child is selected
             <Button
               onPress={() => router.push('/BankingDetailsScreen')}
-              icon={<Ionicons name="card-outline" size={28} color="$green9" />}
-              iconAfter={<Ionicons name="chevron-forward-outline" size={24} color="$gray8" />}
+              icon={<CreditCard size={28} color="$success" />}
+              iconAfter={<ChevronRight size={24} color="$gray8" />}
               justifyContent="space-between"
               width="100%"
               size="$4"

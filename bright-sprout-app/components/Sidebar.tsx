@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform, Dimensions, StyleSheet } from 'react-native';
 import { YStack, H4, Paragraph, Button, XStack, useTheme } from 'tamagui';
-import { Ionicons } from '@expo/vector-icons';
+import { Home, User, Settings, Users, Book, LogOut, UserCircle } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
@@ -29,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfil
       <YStack alignItems="center" paddingVertical="$6" borderBottomWidth={1} borderBottomColor="$borderColor">
         {userProfile ? (
           <YStack alignItems="center">
-            <Ionicons name="person-circle-outline" size={80} color={theme.color.get()} />
+            <UserCircle size={80} color="$success" />
             <H4 color="$color" marginTop="$2" fontFamily="$heading">
               {'firstName' in userProfile ? `${userProfile.firstName} ${userProfile.lastName}` : userProfile.name}
             </H4>
@@ -37,35 +37,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfil
           </YStack>
         ) : (
           <YStack alignItems="center">
-            <Ionicons name="person-circle-outline" size={80} color={theme.color.get()} />
+            <UserCircle size={80} color="$success" />
             <H4 color="$color" marginTop="$2" fontFamily="$heading">Guest</H4>
             <Paragraph color="$color.secondary" fontFamily="$body">Please log in</Paragraph>
           </YStack>
         )}
       </YStack>
       <YStack space="$2" marginTop="$4">
-        <Button chromeless icon={<Ionicons name="home-outline" size={24} color={theme.color.get()} />} onPress={() => navigateAndClose('/Home')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
+        <Button chromeless icon={<Home size={24} color="$success" />} onPress={() => navigateAndClose('/Home')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
           Home
         </Button>
-        <Button chromeless icon={<Ionicons name="person-outline" size={24} color={theme.color.get()} />} onPress={() => navigateAndClose('/ProfileScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
+        <Button chromeless icon={<User size={24} color="$success" />} onPress={() => navigateAndClose('/ProfileScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
           Profile
         </Button>
-        <Button chromeless icon={<Ionicons name="settings-outline" size={24} color={theme.color.get()} />} onPress={() => navigateAndClose('/SettingsScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
+        <Button chromeless icon={<Settings size={24} color="$success" />} onPress={() => navigateAndClose('/SettingsScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
           Settings
         </Button>
         {userProfile?.role !== "Child" && (
-          <Button chromeless icon={<Ionicons name="people-outline" size={24} color={theme.color.get()} />} onPress={() => navigateAndClose('/ManageChildrenScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
+          <Button chromeless icon={<Users size={24} color="$success" />} onPress={() => navigateAndClose('/ManageChildrenScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
             Children
           </Button>
         )}
         {userProfile?.role === "Child" && (
-          <Button chromeless icon={<Ionicons name="book-outline" size={24} color={theme.color.get()} />} onPress={() => navigateAndClose('/VisualAssessmentScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
+          <Button chromeless icon={<Book size={24} color="$success" />} onPress={() => navigateAndClose('/VisualAssessmentScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
             My Learning
           </Button>
         )}
       </YStack>
       <YStack flex={1} justifyContent="flex-end" paddingBottom="$4">
-        <Button chromeless icon={<Ionicons name="log-out-outline" size={24} color={theme.color.get()} />} onPress={handleLogout} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
+        <Button chromeless icon={<LogOut size={24} color="$success" />} onPress={handleLogout} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
           Logout
         </Button>
       </YStack>

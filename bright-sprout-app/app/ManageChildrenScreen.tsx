@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { FlatList, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { UserCircle, Pencil, Trash2, PlusCircle, Users } from '@tamagui/lucide-icons';
 import { useChild } from './ChildContext';
 import { db } from '../firebaseConfig';
 import { doc, deleteDoc } from 'firebase/firestore';
@@ -51,15 +51,15 @@ export default function ManageChildrenScreen() {
       shadowRadius={2}
       elevation={3}
     >
-      <Ionicons name="person-circle-outline" size={60} color="$green9" />
+      <UserCircle size={60} color="$green9" />
       <YStack flex={1} marginLeft="$3">
         <H4 color="$color">{item.name}</H4>
         <Paragraph color="$color.secondary">Username: {item.username}</Paragraph>
         <Paragraph color="$color.secondary">Age: {item.age}</Paragraph>
       </YStack>
       <XStack>
-        <Button chromeless icon={<Ionicons name="pencil-outline" size={24} color="$blue9" />} onPress={() => router.push({ pathname: '/EditChildScreen', params: { childId: item.id } })} />
-        <Button chromeless icon={<Ionicons name="trash-outline" size={24} color="$red9" />} onPress={() => handleDeleteChild(item.id)} />
+        <Button chromeless icon={<Pencil size={24} color="$blue9" />} onPress={() => router.push({ pathname: '/EditChildScreen', params: { childId: item.id } })} />
+        <Button chromeless icon={<Trash2 size={24} color="$red9" />} onPress={() => handleDeleteChild(item.id)} />
       </XStack>
     </XStack>
   );
@@ -68,7 +68,7 @@ export default function ManageChildrenScreen() {
     <YStack flex={1} backgroundColor="$backgroundFocus">
       <YStack flex={1} padding={20}>
         <Button
-          icon={<Ionicons name="add-circle-outline" size={24} color="$color" />}
+          icon={<PlusCircle size={24} color="$color" />}
           backgroundColor="$green9"
           color="$color"
           fontWeight="bold"
@@ -87,7 +87,7 @@ export default function ManageChildrenScreen() {
           />
         ) : (
           <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" backgroundColor="$background" borderRadius="$4" marginTop="$6" shadowColor="#000" shadowOffset={{ width: 0, height: 2 }} shadowOpacity={0.1} shadowRadius={4} elevation={5}>
-            <Ionicons name="people-outline" size={80} color="$gray8" />
+            <Users size={80} color="$gray8" />
             <Paragraph color="$color.secondary" marginBottom="$2">No children added yet.</Paragraph>
             <Paragraph color="$color.tertiary">Tap "Add New Child" to get started.</Paragraph>
           </YStack>
