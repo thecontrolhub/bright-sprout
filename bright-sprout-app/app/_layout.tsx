@@ -176,6 +176,7 @@ console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
           <Stack.Screen name="ProfileScreen" options={{ headerShown: false }} />
           <Stack.Screen name="SettingsScreen" options={{ headerShown: false }} />
           <Stack.Screen name="ChangePasswordScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="BankingDetailsScreen" options={{ headerShown: false }} />
           <Stack.Screen
             name="(tabs)"
           />

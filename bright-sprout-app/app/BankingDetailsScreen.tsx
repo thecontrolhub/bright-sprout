@@ -1,18 +1,15 @@
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-import CustomHeader from './components/CustomHeader';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from './types';
-import { auth, db } from './firebaseConfig';
+import { View, Alert, ActivityIndicator } from 'react-native';
+import { useNavigation } from 'expo-router';
+import { auth, db } from '../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
-import { Ionicons } from '@expo/vector-icons';
-
-type BankingDetailsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'BankingDetails'>;
+import { User, CreditCard, Ban, GitBranch } from '@tamagui/lucide-icons';
+import { YStack, XStack, Paragraph, Text } from 'tamagui';
+import { PrimaryButton } from '../components/StyledButton';
+import { StyledInput } from '../components/StyledInput';
 
 export default function BankingDetailsScreen() {
-  const navigation = useNavigation<BankingDetailsScreenNavigationProp>();
+  const navigation = useNavigation();
   const [accountHolder, setAccountHolder] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [bankName, setBankName] = useState('');
@@ -47,89 +44,46 @@ export default function BankingDetailsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <CustomHeader title="Banking Details" onMenuPress={() => navigation.goBack()} iconType="back" />
-      <View style={styles.content}>
-        <View style={styles.inputContainer}>
-          <Ionicons name="person-outline" size={24} color="#ccc" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
+    <YStack flex={1} backgroundColor="$background">
+      <YStack flex={1} padding="$4">
+        <XStack alignItems="center" borderBottomWidth={1} borderBottomColor="$borderColor" marginBottom="$4">
+          <User size={24} color="$color" marginRight="$2" />
+          <StyledInput
             placeholder="Account Holder Name"
             value={accountHolder}
             onChangeText={setAccountHolder}
           />
-        </View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="card-outline" size={24} color="#ccc" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
+        </XStack>
+        <XStack alignItems="center" borderBottomWidth={1} borderBottomColor="$borderColor" marginBottom="$4">
+          <CreditCard size={24} color="$color" marginRight="$2" />
+          <StyledInput
             placeholder="Account Number"
             value={accountNumber}
             onChangeText={setAccountNumber}
             keyboardType="numeric"
           />
-        </View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="business-outline" size={24} color="#ccc" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
+        </XStack>
+        <XStack alignItems="center" borderBottomWidth={1} borderBottomColor="$borderColor" marginBottom="$4">
+          <Ban size={24} color="$color" marginRight="$2" />
+          <StyledInput
             placeholder="Bank Name"
             value={bankName}
             onChangeText={setBankName}
           />
-        </View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="git-branch-outline" size={24} color="#ccc" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
+        </XStack>
+        <XStack alignItems="center" borderBottomWidth={1} borderBottomColor="$borderColor" marginBottom="$4">
+          <GitBranch size={24} color="$color" marginRight="$2" />
+          <StyledInput
             placeholder="Branch Code"
             value={branchCode}
             onChangeText={setBranchCode}
             keyboardType="numeric"
           />
-        </View>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
-          <Text style={styles.saveButtonText}>{loading ? 'Saving...' : 'Save'}</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+        </XStack>
+        <PrimaryButton onPress={handleSave} disabled={loading}>
+          {loading ? <ActivityIndicator color="#fff" /> : 'Save'}
+        </PrimaryButton>
+      </YStack>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    marginBottom: 20,
-  },
-  inputIcon: {
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 18,
-    paddingVertical: 10,
-  },
-  saveButton: {
-    backgroundColor: '#58CC02',
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
