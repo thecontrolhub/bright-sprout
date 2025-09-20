@@ -148,7 +148,6 @@ export default function EditProfileScreen() {
 
   return (
     <YStack flex={1} backgroundColor="$background">
-      <CustomHeader title="Edit Profile" onMenuPress={() => router.back()} iconType="back" />
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <YStack alignItems="center" marginBottom="$4">
           {image ? (

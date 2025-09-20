@@ -1,6 +1,5 @@
 import React from 'react';
 import { Platform, Dimensions, StyleSheet } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { YStack, H4, Paragraph, Button, XStack, useTheme } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -18,28 +17,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfile, handleLogout }) => {
   const router = useRouter();
   const theme = useTheme(); // Add useTheme hook
-
-  const sidebarTranslateX = Platform.OS !== 'web' ? useSharedValue(-SIDEBAR_WIDTH) : null;
-  const overlayOpacity = Platform.OS !== 'web' ? useSharedValue(0) : null;
-
-  React.useEffect(() => {
-    if (Platform.OS !== 'web' && sidebarTranslateX && overlayOpacity) {
-      sidebarTranslateX.value = withTiming(open ? 0 : -SIDEBAR_WIDTH, { duration: 300 });
-      overlayOpacity.value = withTiming(open ? 0.5 : 0, { duration: 300 });
-    }
-  }, [open]);
-
-  const animatedSidebarStyle = Platform.OS !== 'web' && sidebarTranslateX ? useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: sidebarTranslateX!.value }],
-    };
-  }) : {};
-
-  const animatedOverlayStyle = Platform.OS !== 'web' && overlayOpacity ? useAnimatedStyle(() => {
-    return {
-      opacity: overlayOpacity!.value,
-    };
-  }) : {};
+  console.log("open prop in Sidebar:", open);
 
   const navigateAndClose = (path: string) => {
     router.push(path);
@@ -94,29 +72,37 @@ export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfil
     </YStack>
   );
 
+  if (!open) {
+    return null;
+  }
+
   return (
     <>
-      {open && Platform.OS !== 'web' && (
-        <Animated.View style={[{ ...StyleSheet.absoluteFillObject, backgroundColor: theme.background.get(), opacity: 0.6, zIndex: 99 }, animatedOverlayStyle]}>
-          <YStack flex={1} onPress={() => onOpenChange(false)} />
-        </Animated.View>
-      )}
-
-      {open && Platform.OS === 'web' && (
-         <YStack position="absolute" top={0} left={0} right={0} bottom={0} backgroundColor={theme.background.get()} opacity={0.6} zIndex={99} onPress={() => onOpenChange(false)} />
-      )}
-
-      {Platform.OS !== 'web' ? (
-        <Animated.View style={[{ position: 'absolute', top: 0, left: 0, bottom: 0, width: SIDEBAR_WIDTH, backgroundColor: '$background', zIndex: 100, borderRightWidth: 1, borderRightColor: '$borderColor' }, animatedSidebarStyle]}>
-          <SidebarContent />
-        </Animated.View>
-      ) : (
-        open && (
-          <YStack position="absolute" top={0} left={0} bottom={0} width={SIDEBAR_WIDTH} backgroundColor="$background" zIndex={100} elevation={5}>
-            <SidebarContent />
-          </YStack>
-        )
-      )}
+      <YStack
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        backgroundColor={theme.background.get()}
+        opacity={0.6}
+        zIndex={99}
+        onPress={() => onOpenChange(false)}
+      />
+      <YStack
+        position="absolute"
+        top={0}
+        left={0}
+        bottom={0}
+        width={SIDEBAR_WIDTH}
+        backgroundColor="$background"
+        zIndex={100}
+        elevation={5}
+        borderRightWidth={1}
+        borderRightColor="$borderColor"
+      >
+        <SidebarContent />
+      </YStack>
     </>
   );
 };

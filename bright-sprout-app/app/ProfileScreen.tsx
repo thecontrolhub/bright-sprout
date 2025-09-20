@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Alert } from 'react-native';
 import { auth, db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
-import { useRouter, useIsFocused } from 'expo-router';
+import { useRouter } from 'expo-router';
+
 import { Ionicons } from '@expo/vector-icons';
 import { YStack, H2, H4, Paragraph, Button, ScrollView, Spinner, Image, Text, XStack } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
+import { useSidebar } from './SidebarContext';
 
 interface ParentProfile {
   firstName: string;
@@ -47,8 +49,9 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [displayProfile, setDisplayProfile] = useState<DisplayProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const isFocused = useIsFocused();
+
   const { activeChild } = useChild(); // Use the ChildContext
+  const { setSidebarOpen } = useSidebar();
 
   const fetchProfileData = useCallback(async () => {
     setLoading(true);
@@ -96,10 +99,8 @@ export default function ProfileScreen() {
   }, [router, activeChild]);
 
   useEffect(() => {
-    if (isFocused) {
-      fetchProfileData();
-    }
-  }, [isFocused, fetchProfileData]);
+    fetchProfileData();
+  }, [, ]);
 
   if (loading) {
     return <Spinner size="large" color="$green9" />;
@@ -107,7 +108,6 @@ export default function ProfileScreen() {
 
   return (
     <YStack flex={1} backgroundColor="$background">
-      <CustomHeader title="Profile" onMenuPress={() => router.back()} iconType="back" />
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         {displayProfile ? (
           <YStack space="$4">

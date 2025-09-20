@@ -5,20 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useChild } from './ChildContext';
 import { db } from '../firebaseConfig';
 import { doc, deleteDoc } from 'firebase/firestore';
-
 import { YStack, XStack, Text, Button, Paragraph, H4 } from 'tamagui';
 
 export default function ManageChildrenScreen() {
   const router = useRouter();
   const { children, setActiveChild, activeChild } = useChild(); // Get activeChild
 
-  useEffect(() => {
-    if (activeChild) {
-      // If a child is active, redirect to home screen
-      Alert.alert("Access Denied", "Children do not have access to manage other children.");
-      router.replace('/Home');
-    }
-  }, [activeChild, router]);
+  
 
   const handleDeleteChild = async (childId: string) => {
     Alert.alert(
@@ -73,7 +66,6 @@ export default function ManageChildrenScreen() {
 
   return (
     <YStack flex={1} backgroundColor="$backgroundFocus">
-      <CustomHeader title="Children" onMenuPress={() => router.back()} iconType="back" />
       <YStack flex={1} padding={20}>
         <Button
           icon={<Ionicons name="add-circle-outline" size={24} color="$color" />}

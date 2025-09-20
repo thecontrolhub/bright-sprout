@@ -65,9 +65,6 @@ function AuthStatusProvider({ children }: { children: React.ReactNode }) {
       if (user && inAuthGroup) {
         // User is logged in and in auth group, redirect to home
         router.replace('/Home');
-      } else if (user && !inAuthGroup) {
-        // User is logged in, redirect to home if not already there
-        router.replace('/Home');
       } else if (!user && !inAuthGroup) {
         // User is not logged in and not in auth group, redirect to login
         router.replace('/(auth)/Login');
@@ -129,7 +126,8 @@ function RootLayoutNav() {
   const hideHeader = segments[0] === '(auth)';
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { userProfile, isLoading } = useAuth();
-console.log(colorScheme)
+console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
+
   const handleMenuPress = () => {
     console.log("handleMenuPress called: Opening sidebar");
     setSidebarOpen(true);

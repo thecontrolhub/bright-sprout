@@ -1,5 +1,5 @@
 import React from 'react';
-import { YStack, XStack, H3, Image } from 'tamagui';
+import { YStack, XStack, H3, Image, Button } from 'tamagui';
 
 interface CustomHeaderProps {
   onMenuPress?: () => void;
@@ -15,16 +15,16 @@ export function CustomHeader({ onMenuPress }: CustomHeaderProps) {
       width="100%"
     >
       <XStack alignItems="center" space="$2">
-        {/* Placeholder for logo */}
-        <Image
-          source={require('../assets/images/logo.png')} // Corrected path
-          width={40}
-          height={40}
-          onPress={() => {
-            console.log("Logo pressed in CustomHeader!");
-            onMenuPress?.();
-          }}
-        />
+        <Button chromeless onPress={() => {
+          console.log("Logo pressed in CustomHeader!");
+          onMenuPress?.();
+        }}>
+          <Image
+            source={require('../assets/images/logo.png')} // Corrected path
+            width={40}
+            height={40}
+          />
+        </Button>
       </XStack>
     </XStack>
   );
