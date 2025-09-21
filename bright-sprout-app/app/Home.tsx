@@ -85,6 +85,13 @@ export default function HomeScreen() {
     fetchUserProfile();
   }, []);
 
+  useEffect(() => {
+    console.log(activeChild.baselineAssessmentCompleted)
+    if (activeChild && !activeChild.baselineAssessmentCompleted) {
+      router.replace('/VisualAssessmentScreen');
+    }
+  }, [activeChild, router]);
+
   // Removed useFocusEffect for assessment check as per instructions.
   // If this functionality is still needed, it should be re-evaluated in the context of expo-router.
 
