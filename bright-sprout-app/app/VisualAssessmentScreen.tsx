@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { YStack, H2, Paragraph, Spinner, Button, Image, XStack } from 'tamagui';
+import { YStack, H2, Paragraph, Spinner, Button, Image, XStack, ScrollView } from 'tamagui';
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useChild } from './ChildContext';
 import { useRouter } from 'expo-router';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { CustomHeader } from '../components/CustomHeader';
 
 // Define the structure of a question
 interface Question {
@@ -129,23 +131,44 @@ export default function VisualAssessmentScreen() {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <YStack flex={1} justifyContent="center" alignItems="center" space="$4" padding="$4">
-      <H2>Visual Assessment</H2>
-      <Paragraph>Score: {score}</Paragraph>
-      <Paragraph>{currentQuestion.questionText}</Paragraph>
-      <XStack space="$4">
-        {currentQuestion.options.map((option, index) => {
-          const isSelected = selectedAnswer === index;
-          const isCorrect = questions[currentQuestionIndex].correctAnswerIndex === index;
-          const borderColor = isSelected ? (isCorrect ? '$green10' : '$red10') : '$gray10';
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <YStack flex={1} alignItems="center" space="$4" padding="$4" backgroundColor="$background">
+          <H2 fontFamily="$heading" color="$color">Visual Assessment</H2>
+          <Paragraph fontFamily="$body" color="$color">Score: {score}</Paragraph>
+          <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3" width="100%">
+            <Paragraph fontFamily="$body" color="$color" fontSize="$5" textAlign="center">{currentQuestion.questionText}</Paragraph>
+          </YStack>
+          <XStack space="$4" flexWrap="wrap" justifyContent="center">
+            {currentQuestion.options.map((option, index) => {
+              const isSelected = selectedAnswer === index;
+              const isCorrect = questions[currentQuestionIndex].correctAnswerIndex === index;
+              const borderColor = isSelected ? (isCorrect ? '$green9' : '$red9') : '$gray7';
+              const backgroundColor = isSelected ? (isCorrect ? '$green3' : '$red3') : '$gray2';
 
-          return (
-            <Button key={index} onPress={() => handleAnswer(index)} disabled={selectedAnswer !== null} borderColor={borderColor} borderWidth={2}>
-              <Image source={{ uri: option, width: 100, height: 100 }} />
-            </Button>
-          );
-        })}
-      </XStack>
-    </YStack>
+              return (
+                <Button
+                  key={index}
+                  onPress={() => handleAnswer(index)}
+                  disabled={selectedAnswer !== null}
+                  borderColor={borderColor}
+                  borderWidth={2}
+                  backgroundColor={backgroundColor}
+                  borderRadius="$4"
+                  padding="$3"
+                  marginVertical="$2"
+                  width={120}
+                  height={120}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Image source={{ uri: option, width: 100, height: 100 }} />
+                </Button>
+              );
+            })}
+          </XStack>
+        </YStack>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
