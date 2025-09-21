@@ -27,6 +27,7 @@ export default function VisualAssessmentScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [isFinishing, setIsFinishing] = useState(false);
   const functions = getFunctions();
 
   useEffect(() => {
@@ -34,8 +35,21 @@ export default function VisualAssessmentScreen() {
       if (!activeChild) {
         return;
       }
+      setIsLoading(true); // Start loading
+
       try {
-        setIsLoading(true);
+        const childRef = doc(db, 'children', activeChild.id);
+        const childDoc = await getDoc(childRef);
+        const childData = childDoc.data();
+
+        if (childData && childData.baselineAssessment) {
+          // Load existing baseline
+          setQuestions(childData.baselineAssessment);
+          setIsLoading(false);
+          return; // Exit as baseline is loaded
+        }
+
+        // If no baseline, generate a new one
         const generateAssessmentFunction = httpsCallable<{ age: number; grade: string; subjects: string[] }, { questions: any[] }>(functions, 'generateVisualAssessment');
         const result = await generateAssessmentFunction({
           age: activeChild.age,
@@ -45,7 +59,7 @@ export default function VisualAssessmentScreen() {
         const assessment = result.data;
 
         if (assessment && assessment.questions) {
-          const transformedQuestions = assessment.questions.map((q) => {
+          const transformedQuestions = assessment.questions.map((q: any) => {
             const correctAnswerIndex = q.options.findIndex((opt: any) => opt.isCorrect);
             return {
               questionText: q.questionText,
@@ -56,6 +70,12 @@ export default function VisualAssessmentScreen() {
             };
           });
           setQuestions(transformedQuestions);
+
+          // Save the newly generated baseline to Firestore
+          await updateDoc(childRef, {
+            baselineAssessment: transformedQuestions,
+          });
+
         } else {
           console.error("Assessment data or questions are missing.");
           setQuestions([]);
@@ -64,7 +84,7 @@ export default function VisualAssessmentScreen() {
         console.error("Error generating assessment:", error);
         setQuestions([]);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // End loading
       }
     };
 
@@ -94,6 +114,7 @@ export default function VisualAssessmentScreen() {
   };
 
   const finishAssessment = async (finalAnswers: number[]) => {
+    setIsFinishing(true);
     const areasForImprovement: string[] = [];
     questions.forEach((question, index) => {
       if (question.correctAnswerIndex !== finalAnswers[index]) {
@@ -104,12 +125,26 @@ export default function VisualAssessmentScreen() {
     const uniqueAreasForImprovement = [...new Set(areasForImprovement)];
 
     if (activeChild) {
-      const childRef = doc(db, 'children', activeChild.id);
-      await updateDoc(childRef, {
-        areasForImprovement: arrayUnion(...uniqueAreasForImprovement),
-      });
-      await updateBaselineAssessmentStatus(activeChild.id, true, score);
-      router.replace('/Home');
+      try {
+        const childRef = doc(db, 'children', activeChild.id);
+        const baselineResults = {
+          score: score,
+          answers: finalAnswers,
+          timestamp: new Date().toISOString(), // Save a timestamp
+        };
+        await updateDoc(childRef, {
+          areasForImprovement: arrayUnion(...uniqueAreasForImprovement),
+          baselineResults: baselineResults, // Add this line
+        });
+        await updateBaselineAssessmentStatus(activeChild.id, true, score);
+        router.replace('/Home');
+      } catch (error) {
+        console.error("Error finishing assessment:", error);
+      } finally {
+        setIsFinishing(false);
+      }
+    } else {
+      setIsFinishing(false);
     }
   };
 
@@ -118,6 +153,15 @@ export default function VisualAssessmentScreen() {
       <YStack flex={1} justifyContent="center" alignItems="center">
         <Spinner size="large" color="$orange10" />
         <Paragraph>Loading Assessment...</Paragraph>
+      </YStack>
+    );
+  }
+
+  if (isFinishing) {
+    return (
+      <YStack flex={1} justifyContent="center" alignItems="center">
+        <Spinner size="large" color="$orange10" />
+        <Paragraph>Generating Baseline...</Paragraph>
       </YStack>
     );
   }
