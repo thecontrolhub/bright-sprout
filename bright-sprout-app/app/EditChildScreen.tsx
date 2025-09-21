@@ -7,7 +7,7 @@ import { httpsCallable } from 'firebase/functions';
 import { YStack, H4, Input, Button, ScrollView, Spinner, Select, Adapt, Sheet } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
-import { useLoading } from './LoadingContext';
+import { useLoading } from '../providers/LoadingContext';
 
 export default function EditChildScreen() {
   const router = useRouter();

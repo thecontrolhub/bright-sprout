@@ -8,7 +8,7 @@ import { Rocket, Zap, Leaf, AlertCircle } from '@tamagui/lucide-icons';
 import { YStack, H2, H4, Paragraph, Button, ScrollView, Spinner, Image, Text, XStack } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
 import { useSidebar } from './SidebarContext';
-import { useLoading } from './LoadingContext';
+import { useLoading } from '../providers/LoadingContext';
 
 interface ParentProfile {
   firstName: string;

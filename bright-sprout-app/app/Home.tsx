@@ -11,7 +11,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import { DestructiveButton } from '../components/Button';
 import { PrimaryButton } from '../components/StyledButton';
 import { CustomProgressBar } from '../components/CustomProgressBar';
-import { useLoading } from './LoadingContext';
+import { useLoading } from '../providers/LoadingContext';
 
 const { width } = Dimensions.get('window');
 

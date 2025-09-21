@@ -7,7 +7,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useChild } from './ChildContext';
 import { YStack, XStack, H2, Paragraph, Button, Input, Text, Spinner, ScrollView } from 'tamagui';
 import ImagePickerButton from '../components/ImagePickerButton';
-import { useLoading } from './LoadingContext';
+import { useLoading } from '../providers/LoadingContext';
 
 interface ParentProfile {
   firstName: string;

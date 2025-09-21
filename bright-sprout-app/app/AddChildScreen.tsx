@@ -7,7 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { YStack, H4, Input, Button, ScrollView, Text, Select, Adapt, Sheet } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
-import { useLoading } from './LoadingContext';
+import { useLoading } from '../providers/LoadingContext';
 
 export default function AddChildScreen() {
   const router = useRouter();

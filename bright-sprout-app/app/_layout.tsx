@@ -1,4 +1,4 @@
-import { LoadingProvider, useLoading } from './LoadingContext';
+import { LoadingProvider, useLoading } from '../providers/LoadingContext';
 import { SidebarProvider, useSidebar } from './SidebarContext';
 import { useEffect, useState, ReactNode } from 'react'
 import { app, auth, db } from '../firebaseConfig';
