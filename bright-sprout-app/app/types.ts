@@ -10,7 +10,7 @@ export type RootStackParamList = {
   ProfileScreen: undefined;
   SettingsScreen: undefined;
   ChangePasswordScreen: undefined;
-  '(tabs)': undefined;
+  
   modal: undefined;
   // Add other routes here as needed
 };

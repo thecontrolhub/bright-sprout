@@ -28,7 +28,7 @@ export default function SettingsScreen() {
           <XStack justifyContent="space-between" alignItems="center" width="100%" paddingVertical="$2">
             <XStack alignItems="center" space="$3">
               <Bell size={28} color="$success" />
-              <Text fontSize="$6" lineHeight="$6">Notifications</Text>
+              <Text >Notifications</Text>
             </XStack>
             <XStack alignItems="center"> {/* New XStack wrapper */}
               <Switch checked={notificationsEnabled} onCheckedChange={setNotificationsEnabled} y={-1}> {/* Added y={-1} */}

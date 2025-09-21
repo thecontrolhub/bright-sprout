@@ -17,6 +17,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfile, handleLogout }) => {
   const router = useRouter();
   const theme = useTheme(); // Add useTheme hook
+  console.log("Sidebar - userProfile prop:", userProfile);
   console.log("open prop in Sidebar:", open);
 
   const navigateAndClose = (path: string) => {
