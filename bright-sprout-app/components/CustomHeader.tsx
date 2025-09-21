@@ -15,10 +15,7 @@ export function CustomHeader({ onMenuPress }: CustomHeaderProps) {
       width="100%"
     >
       <XStack alignItems="center" space="$2">
-        <Button chromeless onPress={() => {
-          console.log("Logo pressed in CustomHeader!");
-          onMenuPress?.();
-        }}>
+        <Button chromeless onPress={onMenuPress}>
           <Image
             source={require('../assets/images/logo.png')} // Corrected path
             width={40}

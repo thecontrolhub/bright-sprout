@@ -6,7 +6,7 @@ export interface UserProfile {
   email: string | null;
   firstName?: string;
   lastName?: string;
-  role?: 'Parent' | 'Child'; // Assuming roles are 'Parent' or 'Child'
+  role?: 'Child' |'Parent'; // Assuming roles are 'Parent' or 'Child'
   name: string; // For cases where firstName/lastName might not be present
 }
 
@@ -21,7 +21,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const useAuth = () => {
   const context = useContext(AuthContext);
 
-  console.log(context);
+  console.log("useAuth",context);
   if (!context) {
     throw new Error('useAuth must be used within an AuthStatusProvider');
   }

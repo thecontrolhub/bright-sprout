@@ -1,3 +1,4 @@
+import { LoadingProvider, useLoading } from '../providers/LoadingContext';
 import { SidebarProvider, useSidebar } from './SidebarContext';
 import { useEffect, useState, ReactNode } from 'react'
 import { app, auth, db } from '../firebaseConfig';
@@ -8,7 +9,7 @@ import { useFonts } from 'expo-font'
 import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
 import { ChildProvider, useChild } from './ChildContext' // Import useChild
-import { useTheme, YStack } from 'tamagui'
+import { Spinner, useTheme, YStack } from 'tamagui'
 import { onAuthStateChanged, User, signOut } from 'firebase/auth'
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'; // Import collection, query, where, getDocs
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
@@ -30,71 +31,7 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
-function AuthStatusProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<any | null>(null); // Use 'any' for now, define UserProfile in useAuth.ts
-  const [isLoading, setIsLoading] = useState(true);
-  const segments = useSegments();
-  const router = useRouter();
-  const { activeChild } = useChild(); // Get activeChild from context
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        const childrenRef = collection(db, 'children');
-        const childQuery = query(childrenRef, where("uid", "==", currentUser.uid));
-        const childSnapshot = await getDocs(childQuery);
-
-        if (!childSnapshot.empty) {
-          // Current user is a child
-          const childData = childSnapshot.docs[0].data();
-          const childProfile = { uid: currentUser.uid, email: currentUser.email, role: 'Child', name: childData.name || currentUser.email, ...childData };
-          setUserProfile(childProfile);
-          console.log("AuthStatusProvider - Child UserProfile:", childProfile);
-        } else {
-          // Current user is not a child, now check if they are a parent
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if (userDocSnap.exists()) {
-            // Current user is a parent with a user profile
-            setUserProfile({ uid: currentUser.uid, email: currentUser.email, ...userDocSnap.data() });
-          } else {
-            // Current user is not a child and no user profile in 'users' collection.
-            // This could be a new parent who hasn't created a profile yet, or a parent who has children but no direct 'users' document.
-            // Default to Parent.
-            setUserProfile({ uid: currentUser.uid, email: currentUser.email, role: 'Parent' });
-          }
-        }
-      } else {
-        setUserProfile(null);
-      }
-      setIsLoading(false);
-    });
-    return () => unsubscribe();
-  }, [activeChild]); // Add activeChild to dependency array
-
-  useEffect(() => {
-    if (!isLoading) {
-      const inAuthGroup = segments[0] === '(auth)';
-
-      if (user && inAuthGroup) {
-        // User is logged in and in auth group, redirect to home
-        router.replace('/Home');
-      } else if (!user && !inAuthGroup) {
-        // User is not logged in and not in auth group, redirect to login
-        router.replace('/(auth)/Login');
-      }
-    }
-  }, [user, isLoading, segments]);
-
-  return (
-    <AuthContext.Provider value={{ user, userProfile, isLoading }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+import { AuthStatusProvider } from '../providers/AuthStatusProvider';
 
 export default function RootLayout() {
   const [interLoaded, interError] = useFonts({
@@ -129,11 +66,33 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <Provider>
       <ChildProvider>
-        {children}
+        <LoadingProvider>{children}</LoadingProvider>
       </ChildProvider>
     </Provider>
   )
 }
+
+const GlobalLoading = () => {
+  const { isLoading } = useLoading();
+
+  if (!isLoading) return null;
+
+  return (
+    <YStack
+      position="absolute"
+      top={0}
+      left={0}
+      right={0}
+      bottom={0}
+      backgroundColor="rgba(0, 0, 0, 0.5)"
+      justifyContent="center"
+      alignItems="center"
+      zIndex={999}
+    >
+      <Spinner size="large" color="$orange10" />
+    </YStack>
+  );
+};
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
@@ -143,8 +102,8 @@ function RootLayoutNav() {
   const hideHeader = segments[0] === '(auth)';
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { userProfile, isLoading } = useAuth();
-console.log("RootLayoutNav - userProfile before Sidebar:", userProfile);
-console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
+  console.log("RootLayoutNav - userProfile before Sidebar:", userProfile);
+  console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
 
   const handleMenuPress = () => {
     console.log("handleMenuPress called: Opening sidebar");
@@ -194,6 +153,7 @@ console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
           <Stack.Screen name="SettingsScreen" options={{ headerShown: false }} />
           <Stack.Screen name="ChangePasswordScreen" options={{ headerShown: false }} />
           <Stack.Screen name="BankingDetailsScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="VisualAssessmentScreen" options={{ headerShown: false }} />
           
 
           <Stack.Screen
@@ -202,9 +162,9 @@ console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
         </Stack><Sidebar
           open={sidebarOpen}
           onOpenChange={setSidebarOpen}
-          userProfile={userProfile}
           handleLogout={handleLogout}
         />
+        <GlobalLoading />
       </SafeAreaView>
     </ThemeProvider>
   );

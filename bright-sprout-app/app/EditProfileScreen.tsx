@@ -7,6 +7,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useChild } from './ChildContext';
 import { YStack, XStack, H2, Paragraph, Button, Input, Text, Spinner, ScrollView } from 'tamagui';
 import ImagePickerButton from '../components/ImagePickerButton';
+import { useLoading } from '../providers/LoadingContext';
 
 interface ParentProfile {
   firstName: string;
@@ -28,15 +29,15 @@ const getInitials = (name: string) => {
 
 export default function EditProfileScreen() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [name, setName] = useState(''); // For child's name
   const [image, setImage] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const { setIsLoading } = useLoading();
   const { activeChild } = useChild();
 
   const fetchProfileData = useCallback(async () => {
+    setIsLoading(true);
     const currentUser = auth.currentUser;
     if (currentUser) {
       if (activeChild) {
@@ -80,7 +81,7 @@ export default function EditProfileScreen() {
     } else {
       router.replace('/(auth)/Login');
     }
-    setLoading(false);
+    setIsLoading(false);
   }, [router, activeChild]);
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function EditProfileScreen() {
       return;
     }
 
-    setUploading(true);
+    setIsLoading(true);
     let avatarUrl = image;
     if (image && image.startsWith('file://')) {
       try {
@@ -107,7 +108,7 @@ export default function EditProfileScreen() {
       } catch (error) {
         console.error("Error uploading avatar:", error);
         Alert.alert("Error", "Could not upload profile picture.");
-        setUploading(false);
+        setIsLoading(false);
         return;
       }
     }
@@ -135,16 +136,8 @@ export default function EditProfileScreen() {
       console.error("Error updating profile:", error);
       Alert.alert("Error", "Could not update profile.");
     }
-    setUploading(false);
+    setIsLoading(false);
   };
-
-  if (loading) {
-    return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
-        <Spinner size="large" color="$green9" />
-      </YStack>
-    );
-  }
 
   return (
     <YStack flex={1} backgroundColor="$background">
@@ -213,18 +206,13 @@ export default function EditProfileScreen() {
         )}
         <Button
           onPress={handleUpdateProfile}
-          disabled={uploading}
           backgroundColor="$green9"
           paddingVertical="$4"
           borderRadius="$5"
           alignItems="center"
           marginTop="$4"
         >
-          {uploading ? (
-            <Spinner size="small" color="$white" />
-          ) : (
             <Paragraph color="$white" fontSize="$5" fontWeight="bold">Save Changes</Paragraph>
-          )}
         </Button>
       </ScrollView>
     </YStack>

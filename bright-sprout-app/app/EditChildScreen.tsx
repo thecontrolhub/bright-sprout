@@ -7,6 +7,7 @@ import { httpsCallable } from 'firebase/functions';
 import { YStack, H4, Input, Button, ScrollView, Spinner, Select, Adapt, Sheet } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
+import { useLoading } from '../providers/LoadingContext';
 
 export default function EditChildScreen() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function EditChildScreen() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [gradesList, setGradesList] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { setIsLoading } = useLoading();
   const { activeChild } = useChild(); // Use the ChildContext
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function EditChildScreen() {
 
   useEffect(() => {
     const fetchGrades = async () => {
+      setIsLoading(true);
       try {
         const gradesDocRef = doc(db, 'config', 'app');
         const gradesDocSnap = await getDoc(gradesDocRef);
@@ -42,11 +44,12 @@ export default function EditChildScreen() {
             setGradesList(data.grades);
           }
         } else {
-          console.log("No grades configuration found!");
+          
         }
       } catch (error) {
-        console.error("Error fetching grades:", error);
         Alert.alert('Error', 'Could not fetch grades.');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchGrades();
@@ -55,6 +58,7 @@ export default function EditChildScreen() {
   useEffect(() => {
     const fetchChildData = async () => {
       if (!childId) return;
+      setIsLoading(true);
       try {
         const childDocRef = doc(db, 'children', childId);
         const childDocSnap = await getDoc(childDocRef);
@@ -71,18 +75,17 @@ export default function EditChildScreen() {
           router.back();
         }
       } catch (error) {
-        console.error("Error fetching child data:", error);
         Alert.alert('Error', 'Could not fetch child data.');
         router.back();
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    if (gradesList.length > 0 || !loading) { // Only fetch child data once grades are loaded or if already loading
+    if (gradesList.length > 0) {
       fetchChildData();
     }
-  }, [childId, gradesList, loading]);
+  }, [childId, gradesList]);
 
   const handleUpdateChild = async () => {
     if (!name || !age || !username || !grade) {
@@ -97,6 +100,7 @@ export default function EditChildScreen() {
 
     if (!childId) return;
 
+    setIsLoading(true);
     try {
       const childDocRef = doc(db, 'children', childId);
       await updateDoc(childDocRef, {
@@ -114,14 +118,11 @@ export default function EditChildScreen() {
       Alert.alert('Success', 'Child updated successfully!');
       router.back();
     } catch (error) {
-      console.error("Error updating child:", error);
       Alert.alert('Error', 'Could not update child.');
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  if (loading) {
-    return <Spinner size="large" color="$green9" />;
-  }
 
   return (
     <YStack flex={1} backgroundColor="$background">

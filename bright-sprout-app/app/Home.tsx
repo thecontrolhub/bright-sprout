@@ -11,6 +11,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import { DestructiveButton } from '../components/Button';
 import { PrimaryButton } from '../components/StyledButton';
 import { CustomProgressBar } from '../components/CustomProgressBar';
+import { useLoading } from '../providers/LoadingContext';
 
 const { width } = Dimensions.get('window');
 
@@ -49,45 +50,51 @@ export default function HomeScreen() {
   const firebaseAuth = getAuth();
   const { activeChild, children, setActiveChild } = useChild();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const { setIsLoading } = useLoading();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        const childDocRef = doc(db, 'children', currentUser.uid);
-        const childDocSnap = await getDoc(childDocRef);
+      setIsLoading(true);
+      try {
+        const currentUser = auth.currentUser;
+     
 
-        if (childDocSnap.exists()) {
-          const childData = childDocSnap.data();
-          setUserProfile({
-            name: childData.name,
-            role: "Child",
-          });
-        } else {
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (userDocSnap.exists()) {
-            const userData = userDocSnap.data() as UserProfile;
-            setUserProfile(userData);
+        if (currentUser) {
+          const childDocRef = doc(db, 'children', currentUser.uid);
+          const childDocSnap = await getDoc(childDocRef);
+
+          if (childDocSnap.exists()) {
+            const childData = childDocSnap.data();
+            setUserProfile({
+              name: childData.name,
+              role: "Child",
+            });
+          } else {
+            const userDocRef = doc(db, 'users', currentUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+              const userData = userDocSnap.data() as UserProfile;
+              setUserProfile(userData);
+            }
           }
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchUserProfile();
   }, []);
 
+  useEffect(() => {
+    console.log(activeChild.baselineAssessmentCompleted)
+    if (activeChild && !activeChild.baselineAssessmentCompleted) {
+      router.replace('/VisualAssessmentScreen');
+    }
+  }, [activeChild, router]);
+
   // Removed useFocusEffect for assessment check as per instructions.
   // If this functionality is still needed, it should be re-evaluated in the context of expo-router.
 
-  const handleLogout = async () => {
-    try {
-      await signOut(firebaseAuth);
-      router.replace('/(auth)/Login');
-    } catch (error) {
-      console.error("Logout error:", error);
-      // Optionally, show an alert to the user
-    }
-  };
 
   return (
     <YStack flex={1} backgroundColor="$background">
@@ -131,9 +138,6 @@ export default function HomeScreen() {
                 ))}
               </ScrollView>
             </YStack>
-            <DestructiveButton onPress={handleLogout}>
-              Logout
-            </DestructiveButton>
           </YStack>
         ) : children.length > 0 ? (
           <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
