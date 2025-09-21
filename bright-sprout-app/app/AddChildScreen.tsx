@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { YStack, H4, Input, Button, ScrollView, Text, Select, Adapt, Sheet } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
+import { useLoading } from './LoadingContext';
 
 export default function AddChildScreen() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function AddChildScreen() {
   const [grade, setGrade] = useState('');
   const [gradesList, setGradesList] = useState<string[]>([]);
   const { activeChild } = useChild(); // Use the ChildContext
+  const { setIsLoading } = useLoading();
 
   useEffect(() => {
     if (activeChild) {
@@ -28,6 +30,7 @@ export default function AddChildScreen() {
 
   useEffect(() => {
     const fetchGrades = async () => {
+      setIsLoading(true);
       try {
         const gradesDocRef = doc(db, 'config', 'app');
         const gradesDocSnap = await getDoc(gradesDocRef);
@@ -45,6 +48,8 @@ export default function AddChildScreen() {
       } catch (error) {
         console.error("Error fetching grades:", error);
         Alert.alert('Error', 'Could not fetch grades.');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchGrades();
@@ -66,6 +71,7 @@ export default function AddChildScreen() {
 
       console.log('Current User:', auth.currentUser); // Added this line for debugging
 
+      setIsLoading(true);
       try {
         await currentUser.getIdToken(true);
         const addChild = httpsCallable(functions, 'addChildWithUsername');
@@ -88,6 +94,8 @@ export default function AddChildScreen() {
       } catch (error: any) {
         console.error("Error adding child:", error);
         Alert.alert('Error', error.message);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       Alert.alert("Error", "No user is logged in. Please log in as a parent.");

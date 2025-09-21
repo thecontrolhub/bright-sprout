@@ -8,6 +8,7 @@ import { Rocket, Zap, Leaf, AlertCircle } from '@tamagui/lucide-icons';
 import { YStack, H2, H4, Paragraph, Button, ScrollView, Spinner, Image, Text, XStack } from 'tamagui';
 import { useChild } from './ChildContext'; // Import useChild
 import { useSidebar } from './SidebarContext';
+import { useLoading } from './LoadingContext';
 
 interface ParentProfile {
   firstName: string;
@@ -48,63 +49,62 @@ const getInitials = (name: string) => {
 export default function ProfileScreen() {
   const router = useRouter();
   const [displayProfile, setDisplayProfile] = useState<DisplayProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { setIsLoading } = useLoading();
 
   const { activeChild } = useChild(); // Use the ChildContext
   const { setSidebarOpen } = useSidebar();
 
   const fetchProfileData = useCallback(async () => {
-    setLoading(true);
-    if (activeChild) {
-      // Fetch child profile
-      try {
-        const childDocRef = doc(db, 'children', activeChild.id);
-        const childDocSnap = await getDoc(childDocRef);
-        if (childDocSnap.exists()) {
-          const data = childDocSnap.data();
-          setDisplayProfile({
-            name: data.name,
-            age: data.age,
-            grade: data.grade,
-            username: data.username,
-            avatar: data.avatar,
-            role: "Child", // Explicitly set role for display
-          } as ChildProfileDisplay);
-        } else {
-          Alert.alert("Error", "Child profile not found.");
-        }
-      } catch (error) {
-        console.error("Error fetching child profile:", error);
-        Alert.alert("Error", "Could not fetch child profile.");
-      }
-    } else {
-      // Fetch parent profile
-      const currentUser = auth.currentUser;
-      if (currentUser) {
+    setIsLoading(true);
+    try {
+      if (activeChild) {
+        // Fetch child profile
         try {
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (userDocSnap.exists()) {
-            setDisplayProfile(userDocSnap.data() as ParentProfile);
+          const childDocRef = doc(db, 'children', activeChild.id);
+          const childDocSnap = await getDoc(childDocRef);
+          if (childDocSnap.exists()) {
+            const data = childDocSnap.data();
+            setDisplayProfile({
+              name: data.name,
+              age: data.age,
+              grade: data.grade,
+              username: data.username,
+              avatar: data.avatar,
+              role: "Child", // Explicitly set role for display
+            } as ChildProfileDisplay);
           } else {
-            Alert.alert("Error", "User profile not found.");
+            Alert.alert("Error", "Child profile not found.");
           }
         } catch (error) {
-          console.error("Error fetching user profile:", error);
-          Alert.alert("Error", "Could not fetch user profile.");
+          console.error("Error fetching child profile:", error);
+          Alert.alert("Error", "Could not fetch child profile.");
+        }
+      } else {
+        // Fetch parent profile
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          try {
+            const userDocRef = doc(db, 'users', currentUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+              setDisplayProfile(userDocSnap.data() as ParentProfile);
+            } else {
+              Alert.alert("Error", "User profile not found.");
+            }
+          } catch (error) {
+            console.error("Error fetching user profile:", error);
+            Alert.alert("Error", "Could not fetch user profile.");
+          }
         }
       }
+    } finally {
+      setIsLoading(false);
     }
-    setLoading(false);
   }, [router, activeChild]);
 
   useEffect(() => {
     fetchProfileData();
-  }, [, ]);
-
-  if (loading) {
-    return <Spinner size="large" color="$success" />;
-  }
+  }, [fetchProfileData]);
 
   return (
     <YStack flex={1} backgroundColor="$background">

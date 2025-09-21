@@ -1,3 +1,4 @@
+import { LoadingProvider, useLoading } from './LoadingContext';
 import { SidebarProvider, useSidebar } from './SidebarContext';
 import { useEffect, useState, ReactNode } from 'react'
 import { app, auth, db } from '../firebaseConfig';
@@ -8,7 +9,7 @@ import { useFonts } from 'expo-font'
 import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
 import { ChildProvider, useChild } from './ChildContext' // Import useChild
-import { useTheme, YStack } from 'tamagui'
+import { Spinner, useTheme, YStack } from 'tamagui'
 import { onAuthStateChanged, User, signOut } from 'firebase/auth'
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'; // Import collection, query, where, getDocs
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
@@ -129,11 +130,33 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <Provider>
       <ChildProvider>
-        {children}
+        <LoadingProvider>{children}</LoadingProvider>
       </ChildProvider>
     </Provider>
   )
 }
+
+const GlobalLoading = () => {
+  const { isLoading } = useLoading();
+
+  if (!isLoading) return null;
+
+  return (
+    <YStack
+      position="absolute"
+      top={0}
+      left={0}
+      right={0}
+      bottom={0}
+      backgroundColor="rgba(0, 0, 0, 0.5)"
+      justifyContent="center"
+      alignItems="center"
+      zIndex={999}
+    >
+      <Spinner size="large" color="$orange10" />
+    </YStack>
+  );
+};
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
@@ -143,8 +166,8 @@ function RootLayoutNav() {
   const hideHeader = segments[0] === '(auth)';
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { userProfile, isLoading } = useAuth();
-console.log("RootLayoutNav - userProfile before Sidebar:", userProfile);
-console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
+  console.log("RootLayoutNav - userProfile before Sidebar:", userProfile);
+  console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
 
   const handleMenuPress = () => {
     console.log("handleMenuPress called: Opening sidebar");
@@ -205,6 +228,7 @@ console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
           userProfile={userProfile}
           handleLogout={handleLogout}
         />
+        <GlobalLoading />
       </SafeAreaView>
     </ThemeProvider>
   );
