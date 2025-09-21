@@ -31,71 +31,7 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
-function AuthStatusProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<any | null>(null); // Use 'any' for now, define UserProfile in useAuth.ts
-  const [isLoading, setIsLoading] = useState(true);
-  const segments = useSegments();
-  const router = useRouter();
-  const { activeChild } = useChild(); // Get activeChild from context
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        const childrenRef = collection(db, 'children');
-        const childQuery = query(childrenRef, where("uid", "==", currentUser.uid));
-        const childSnapshot = await getDocs(childQuery);
-
-        if (!childSnapshot.empty) {
-          // Current user is a child
-          const childData = childSnapshot.docs[0].data();
-          const childProfile = { uid: currentUser.uid, email: currentUser.email, role: 'Child', name: childData.name || currentUser.email, ...childData };
-          setUserProfile(childProfile);
-          console.log("AuthStatusProvider - Child UserProfile:", childProfile);
-        } else {
-          // Current user is not a child, now check if they are a parent
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if (userDocSnap.exists()) {
-            // Current user is a parent with a user profile
-            setUserProfile({ uid: currentUser.uid, email: currentUser.email, ...userDocSnap.data() });
-          } else {
-            // Current user is not a child and no user profile in 'users' collection.
-            // This could be a new parent who hasn't created a profile yet, or a parent who has children but no direct 'users' document.
-            // Default to Parent.
-            setUserProfile({ uid: currentUser.uid, email: currentUser.email, role: 'Parent' });
-          }
-        }
-      } else {
-        setUserProfile(null);
-      }
-      setIsLoading(false);
-    });
-    return () => unsubscribe();
-  }, [activeChild]); // Add activeChild to dependency array
-
-  useEffect(() => {
-    if (!isLoading) {
-      const inAuthGroup = segments[0] === '(auth)';
-
-      if (user && inAuthGroup) {
-        // User is logged in and in auth group, redirect to home
-        router.replace('/Home');
-      } else if (!user && !inAuthGroup) {
-        // User is not logged in and not in auth group, redirect to login
-        router.replace('/(auth)/Login');
-      }
-    }
-  }, [user, isLoading, segments]);
-
-  return (
-    <AuthContext.Provider value={{ user, userProfile, isLoading }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+import { AuthStatusProvider } from '../providers/AuthStatusProvider';
 
 export default function RootLayout() {
   const [interLoaded, interError] = useFonts({
@@ -225,7 +161,6 @@ function RootLayoutNav() {
         </Stack><Sidebar
           open={sidebarOpen}
           onOpenChange={setSidebarOpen}
-          userProfile={userProfile}
           handleLogout={handleLogout}
         />
         <GlobalLoading />

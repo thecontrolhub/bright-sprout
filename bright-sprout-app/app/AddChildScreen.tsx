@@ -43,10 +43,9 @@ export default function AddChildScreen() {
             }
           }
         } else {
-          console.log("No grades configuration found!");
+          
         }
       } catch (error) {
-        console.error("Error fetching grades:", error);
         Alert.alert('Error', 'Could not fetch grades.');
       } finally {
         setIsLoading(false);
@@ -69,7 +68,7 @@ export default function AddChildScreen() {
         return;
       }
 
-      console.log('Current User:', auth.currentUser); // Added this line for debugging
+      
 
       setIsLoading(true);
       try {
@@ -92,7 +91,6 @@ export default function AddChildScreen() {
           Alert.alert('Error', (result.data as any)?.message || 'Failed to add child.');
         }
       } catch (error: any) {
-        console.error("Error adding child:", error);
         Alert.alert('Error', error.message);
       } finally {
         setIsLoading(false);

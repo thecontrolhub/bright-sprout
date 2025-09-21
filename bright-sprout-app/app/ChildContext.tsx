@@ -44,9 +44,8 @@ export const ChildProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       if (activeChild && activeChild.id === childId) {
         setActiveChild(prevActiveChild => ({ ...prevActiveChild!, baselineAssessmentCompleted: status }));
       }
-      console.log(`Baseline assessment status for child ${childId} updated to ${status}`);
+      
     } catch (error) {
-      console.error("Error updating baseline assessment status:", error);
       throw error;
     }
   };
@@ -74,7 +73,6 @@ export const ChildProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               id: doc.id,
               ...doc.data()
             })) as ChildProfile[];
-            console.log("Fetched children for user", user.uid, ":", childrenData);
             setChildrenList(childrenData);
             setChildLoading(false); // Done loading for parent user
           });

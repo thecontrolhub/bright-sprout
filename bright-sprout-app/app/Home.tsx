@@ -64,7 +64,6 @@ export default function HomeScreen() {
           const childDocSnap = await getDoc(childDocRef);
 
           if (childDocSnap.exists()) {
-               console.log("Current User:", currentUser);
             const childData = childDocSnap.data();
             setUserProfile({
               name: childData.name,

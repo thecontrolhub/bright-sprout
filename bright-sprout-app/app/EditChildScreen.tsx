@@ -44,10 +44,9 @@ export default function EditChildScreen() {
             setGradesList(data.grades);
           }
         } else {
-          console.log("No grades configuration found!");
+          
         }
       } catch (error) {
-        console.error("Error fetching grades:", error);
         Alert.alert('Error', 'Could not fetch grades.');
       } finally {
         setIsLoading(false);
@@ -76,7 +75,6 @@ export default function EditChildScreen() {
           router.back();
         }
       } catch (error) {
-        console.error("Error fetching child data:", error);
         Alert.alert('Error', 'Could not fetch child data.');
         router.back();
       } finally {
@@ -120,7 +118,6 @@ export default function EditChildScreen() {
       Alert.alert('Success', 'Child updated successfully!');
       router.back();
     } catch (error) {
-      console.error("Error updating child:", error);
       Alert.alert('Error', 'Could not update child.');
     } finally {
       setIsLoading(false);

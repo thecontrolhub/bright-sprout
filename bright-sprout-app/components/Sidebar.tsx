@@ -1,8 +1,10 @@
 import React from 'react';
 import { Platform, Dimensions, StyleSheet } from 'react-native';
-import { YStack, H4, Paragraph, Button, XStack, useTheme } from 'tamagui';
-import { Home, User, Settings, Users, Book, LogOut, UserCircle } from '@tamagui/lucide-icons';
+import { YStack, H4, Paragraph, Button, XStack, useTheme, ScrollView } from 'tamagui';
+import { Home, User, Settings, Users, Book, LogOut, UserCircle, CheckCircle } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../hooks/useAuth';
+import { useChild } from '../app/ChildContext';
 
 const { width } = Dimensions.get('window');
 const SIDEBAR_WIDTH = 280;
@@ -10,18 +12,24 @@ const SIDEBAR_WIDTH = 280;
 interface SidebarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  userProfile: any; // TODO: Define a proper type for userProfile
   handleLogout: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfile, handleLogout }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, handleLogout }) => {
   const router = useRouter();
-  const theme = useTheme(); // Add useTheme hook
-  console.log("Sidebar - userProfile prop:", userProfile);
-  console.log("open prop in Sidebar:", open);
+  const theme = useTheme();
+  const { userProfile } = useAuth();
+  const { activeChild, children, setActiveChild } = useChild();
+
+  console.log('Sidebar userProfile:', userProfile);
 
   const navigateAndClose = (path: string) => {
     router.push(path);
+    onOpenChange(false);
+  };
+
+  const handleSelectChild = (child: any) => {
+    setActiveChild(child);
     onOpenChange(false);
   };
 
@@ -32,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfil
           <YStack alignItems="center">
             <UserCircle size={80} color="$success" />
             <H4 color="$color" marginTop="$2" fontFamily="$heading">
-              {'firstName' in userProfile ? `${userProfile.firstName} ${userProfile.lastName}` : userProfile.name}
+              {userProfile.name}
             </H4>
             <Paragraph color="$color.secondary" fontFamily="$body">{userProfile.role}</Paragraph>
           </YStack>
@@ -54,17 +62,37 @@ export const Sidebar: React.FC<SidebarProps> = ({ open, onOpenChange, userProfil
         <Button chromeless icon={<Settings size={24} color="$success" />} onPress={() => navigateAndClose('/SettingsScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
           Settings
         </Button>
-        {userProfile?.role !== "Child" && (
+        {userProfile?.role !== "child" && (
           <Button chromeless icon={<Users size={24} color="$success" />} onPress={() => navigateAndClose('/ManageChildrenScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
             Children
           </Button>
         )}
-        {userProfile?.role === "Child" && (
+        {userProfile?.role === "child" && (
           <Button chromeless icon={<Book size={24} color="$success" />} onPress={() => navigateAndClose('/VisualAssessmentScreen')} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
             My Learning
           </Button>
         )}
       </YStack>
+      {userProfile?.role === 'Parent' && children.length > 0 && (
+        <YStack space="$2" marginTop="$4">
+          <H4 color="$color.secondary" fontFamily="$heading">Switch Child</H4>
+          <ScrollView>
+            {children.map((child) => (
+              <Button
+                key={child.id}
+                chromeless
+                icon={activeChild?.id === child.id ? <CheckCircle size={24} color="$success" /> : <UserCircle size={24} color="$success" />}
+                onPress={() => handleSelectChild(child)}
+                justifyContent="flex-start"
+                paddingLeft="$2"
+                fontFamily="$body"
+              >
+                {child.name}
+              </Button>
+            ))}
+          </ScrollView>
+        </YStack>
+      )}
       <YStack flex={1} justifyContent="flex-end" paddingBottom="$4">
         <Button chromeless icon={<LogOut size={24} color="$success" />} onPress={handleLogout} justifyContent="flex-start" paddingLeft="$2" fontFamily="$body">
           Logout
