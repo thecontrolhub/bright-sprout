@@ -11,6 +11,7 @@ import { CustomHeader } from '../components/CustomHeader';
 // Define the structure of a question
 interface Question {
   questionText: string;
+  questionShape?: string; // Add questionShape here
   options: string[];
   correctAnswerIndex: number;
   subject: string;
@@ -48,6 +49,7 @@ export default function VisualAssessmentScreen() {
             const correctAnswerIndex = q.options.findIndex((opt: any) => opt.isCorrect);
             return {
               questionText: q.questionText,
+              questionShape: q.questionShape,
               options: q.options.map((opt: any) => opt.shape),
               correctAnswerIndex: correctAnswerIndex,
               subject: q.subject,
@@ -138,6 +140,14 @@ export default function VisualAssessmentScreen() {
           <Paragraph fontFamily="$body" color="$color">Score: {score}</Paragraph>
           <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3" width="100%">
             <Paragraph fontFamily="$body" color="$color" fontSize="$5" textAlign="center">{currentQuestion.questionText}</Paragraph>
+            {currentQuestion.questionShape && (
+              <Image
+                source={{ uri: currentQuestion.questionShape, width: 150, height: 150 }}
+                alt="Question Image"
+                borderRadius="$3"
+                marginVertical="$3"
+              />
+            )}
           </YStack>
           <XStack space="$4" flexWrap="wrap" justifyContent="center">
             {currentQuestion.options.map((option, index) => {
