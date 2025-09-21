@@ -115,7 +115,7 @@ export default function HomeScreen() {
                     <Paragraph color="$color" fontWeight="bold" fontFamily="$body">{lesson.title}</Paragraph>
                     <CustomProgressBar progress={lesson.progress} color={lesson.color} unfilledColor={"$gray6"} />
                   </YStack>
-                  {lesson.progress === 1 && <CheckCircle size={32} color={"$green9"} />}
+                  {lesson.progress === 1 && <CheckCircle size={32} color={$green9} />}
                 </XStack>
               ))}
             </YStack>

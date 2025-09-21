@@ -106,6 +106,7 @@ export default function SignUpScreen() {
       <H1 color="$green10" fontFamily="$heading" marginBottom="$2">BrightSprout</H1>
       <H3 color="$color" fontFamily="$heading" marginBottom="$1">Choose Your Role</H3>
       <Paragraph color="$color" fontFamily="$body" marginBottom="$4">How will you be using the app?</Paragraph>
+      
       <PrimaryButton onPress={() => handleRoleSelect('Parent')} disabled={loading}>
         I am a Parent
       </PrimaryButton>
@@ -115,6 +116,7 @@ export default function SignUpScreen() {
       <PrimaryButton onPress={() => handleRoleSelect('Teacher')} disabled={loading}>
         I am a Teacher
       </PrimaryButton>
+
       <GhostButton onPress={() => router.push('/(auth)/Login')}>
           Back to Login
       </GhostButton>
@@ -124,7 +126,8 @@ export default function SignUpScreen() {
   const renderParentFormContent = () => ( // Renamed and now returns YStack
     <YStack flex={1} justifyContent="center" alignItems="center" space="$4">
         <H3 color="$color" fontFamily="$heading" marginBottom="$1">Parent Sign Up</H3>
-                <Paragraph color="$color" fontFamily="$body" marginBottom="$4">Create your account to get started.</Paragraph>
+        <Paragraph color="$color" fontFamily="$body" marginBottom="$4">Create your account to get started.</Paragraph>
+
         <StyledInput placeholder="First Name" value={firstName} onChangeText={setFirstName} />
         <StyledInput placeholder="Last Name" value={lastName} onChangeText={setLastName} />
         <StyledInput placeholder="Email Address" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />

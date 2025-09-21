@@ -7,10 +7,10 @@ import {  ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack, useSegments, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
-import { ChildProvider, useChild } from './ChildContext' // Import useChild
+import { ChildProvider } from './ChildContext'
 import { useTheme, YStack } from 'tamagui'
 import { onAuthStateChanged, User, signOut } from 'firebase/auth'
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'; // Import collection, query, where, getDocs
+import { doc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
 import { CustomHeader } from '../components/CustomHeader';
 import { Sidebar } from '../components/Sidebar';
@@ -36,36 +36,19 @@ function AuthStatusProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const segments = useSegments();
   const router = useRouter();
-  const { activeChild } = useChild(); // Get activeChild from context
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const childrenRef = collection(db, 'children');
-        const childQuery = query(childrenRef, where("uid", "==", currentUser.uid));
-        const childSnapshot = await getDocs(childQuery);
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
 
-        if (!childSnapshot.empty) {
-          // Current user is a child
-          const childData = childSnapshot.docs[0].data();
-          const childProfile = { uid: currentUser.uid, email: currentUser.email, role: 'Child', name: childData.name || currentUser.email, ...childData };
-          setUserProfile(childProfile);
-          console.log("AuthStatusProvider - Child UserProfile:", childProfile);
+        if (userDocSnap.exists()) {
+          setUserProfile({ uid: currentUser.uid, email: currentUser.email, ...userDocSnap.data() });
         } else {
-          // Current user is not a child, now check if they are a parent
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if (userDocSnap.exists()) {
-            // Current user is a parent with a user profile
-            setUserProfile({ uid: currentUser.uid, email: currentUser.email, ...userDocSnap.data() });
-          } else {
-            // Current user is not a child and no user profile in 'users' collection.
-            // This could be a new parent who hasn't created a profile yet, or a parent who has children but no direct 'users' document.
-            // Default to Parent.
-            setUserProfile({ uid: currentUser.uid, email: currentUser.email, role: 'Parent' });
-          }
+          // If user document doesn't exist, create a basic profile
+          setUserProfile({ uid: currentUser.uid, email: currentUser.email, role: 'Parent' }); // Default to Parent
         }
       } else {
         setUserProfile(null);
@@ -73,7 +56,7 @@ function AuthStatusProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     });
     return () => unsubscribe();
-  }, [activeChild]); // Add activeChild to dependency array
+  }, []);
 
   useEffect(() => {
     if (!isLoading) {
@@ -81,6 +64,9 @@ function AuthStatusProvider({ children }: { children: React.ReactNode }) {
 
       if (user && inAuthGroup) {
         // User is logged in and in auth group, redirect to home
+        router.replace('/Home');
+      } else if (user && !inAuthGroup) {
+        // User is logged in, redirect to home if not already there
         router.replace('/Home');
       } else if (!user && !inAuthGroup) {
         // User is not logged in and not in auth group, redirect to login
@@ -143,9 +129,7 @@ function RootLayoutNav() {
   const hideHeader = segments[0] === '(auth)';
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { userProfile, isLoading } = useAuth();
-console.log("RootLayoutNav - userProfile before Sidebar:", userProfile);
-console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
-
+console.log(colorScheme)
   const handleMenuPress = () => {
     console.log("handleMenuPress called: Opening sidebar");
     setSidebarOpen(true);
@@ -179,9 +163,10 @@ console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
         },
       }}
     >
-
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <SafeAreaView style={{ flex: 1 }}>
-        {!hideHeader && <CustomHeader onMenuPress={handleMenuPress} />}<Stack>
+        {!hideHeader && <CustomHeader onMenuPress={handleMenuPress} />}
+        <Stack>
           <Stack.Screen name="(auth)/Login" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/SignUp" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/ForgotPasswordScreen" options={{ headerShown: false }} />
@@ -193,13 +178,16 @@ console.log("sidebarOpen in RootLayoutNav:", sidebarOpen);
           <Stack.Screen name="ProfileScreen" options={{ headerShown: false }} />
           <Stack.Screen name="SettingsScreen" options={{ headerShown: false }} />
           <Stack.Screen name="ChangePasswordScreen" options={{ headerShown: false }} />
-          <Stack.Screen name="BankingDetailsScreen" options={{ headerShown: false }} />
-          
+          <Stack.Screen
+            name="(tabs)"
+          />
 
           <Stack.Screen
             name="modal"
           />
-        </Stack><Sidebar
+        </Stack>
+
+        <Sidebar
           open={sidebarOpen}
           onOpenChange={setSidebarOpen}
           userProfile={userProfile}
