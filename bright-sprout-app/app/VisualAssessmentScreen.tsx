@@ -6,26 +6,28 @@ import { useChild } from './ChildContext';
 import { useRouter } from 'expo-router';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CustomHeader } from '../components/CustomHeader';
 
 // Define the structure of a question
 interface Question {
   questionText: string;
-  options: string[];
-  correctAnswerIndex: number;
+  questionImage: string;
   subject: string;
+  options: {
+    image: string;
+    isCorrect: boolean;
+  }[];
 }
 
 export default function VisualAssessmentScreen() {
   const { activeChild, updateBaselineAssessmentStatus } = useChild();
   const router = useRouter();
-  const [subjects, setSubjects] = useState<string[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [isFinishing, setIsFinishing] = useState(false);
   const functions = getFunctions();
 
   useEffect(() => {
@@ -33,33 +35,52 @@ export default function VisualAssessmentScreen() {
       if (!activeChild) {
         return;
       }
-      try {
-        setIsLoading(true);
-        const generateAssessmentFunction = httpsCallable<{ age: number; grade: string; subjects: string[] }, { questions: any[] }>(functions, 'generateVisualAssessment');
-        const result = await generateAssessmentFunction({
-          age: activeChild.age,
-          grade: activeChild.grade,
-          subjects: ['visual'],
-        });
-        const assessment = result.data;
+      setIsLoading(true);
 
-        if (assessment && assessment.questions) {
-          const transformedQuestions = assessment.questions.map((q) => {
-            const correctAnswerIndex = q.options.findIndex((opt: any) => opt.isCorrect);
-            return {
-              questionText: q.questionText,
-              options: q.options.map((opt: any) => opt.shape),
-              correctAnswerIndex: correctAnswerIndex,
-              subject: q.subject,
-            };
-          });
-          setQuestions(transformedQuestions);
+      try {
+        const childRef = doc(db, 'children', activeChild.id);
+        const childDoc = await getDoc(childRef);
+        const childData = childDoc.data();
+
+        if (childData && childData.baselineResults) {
+          // Assessment is already complete, redirect to home.
+          router.replace('/Home');
+          return;
+        }
+
+        // Data validation check
+        const isValidAssessment = 
+          childData && 
+          childData.baselineAssessment && 
+          Array.isArray(childData.baselineAssessment) && 
+          childData.baselineAssessment.length > 0 && 
+          childData.baselineAssessment[0].questionText &&
+          childData.baselineAssessment[0].options;
+
+        if (isValidAssessment) {
+          setQuestions(childData.baselineAssessment);
         } else {
-          console.error("Assessment data or questions are missing.");
-          setQuestions([]);
+          // If data is invalid or doesn't exist, generate a new assessment
+          const generateAssessmentFunction = httpsCallable<{ age: number; grade: string; }, Question[]>(functions, 'generateVisualAssessment');
+          const result = await generateAssessmentFunction({
+            age: activeChild.age,
+            grade: activeChild.grade,
+          });
+          const newQuestions = result.data;
+
+          if (newQuestions && Array.isArray(newQuestions)) {
+            setQuestions(newQuestions);
+            // Overwrite the old invalid assessment data
+            await updateDoc(childRef, {
+              baselineAssessment: newQuestions,
+            });
+          } else {
+            console.error("Received invalid question data from backend.");
+            setQuestions([]);
+          }
         }
       } catch (error) {
-        console.error("Error generating assessment:", error);
+        console.error("Error processing assessment:", error);
         setQuestions([]);
       } finally {
         setIsLoading(false);
@@ -72,8 +93,12 @@ export default function VisualAssessmentScreen() {
   }, [activeChild, functions]);
 
   const handleAnswer = (optionIndex: number) => {
+    if (selectedAnswer !== null) return; // Prevent changing answer
+
     setSelectedAnswer(optionIndex);
-    const isCorrect = questions[currentQuestionIndex].correctAnswerIndex === optionIndex;
+    const currentQuestion = questions[currentQuestionIndex];
+    const isCorrect = currentQuestion.options[optionIndex].isCorrect;
+
     if (isCorrect) {
       setScore(score + 1);
     }
@@ -88,13 +113,15 @@ export default function VisualAssessmentScreen() {
       } else {
         finishAssessment(newAnswers);
       }
-    }, 1000);
+    }, 300); // Reduced delay
   };
 
   const finishAssessment = async (finalAnswers: number[]) => {
+    setIsFinishing(true);
     const areasForImprovement: string[] = [];
     questions.forEach((question, index) => {
-      if (question.correctAnswerIndex !== finalAnswers[index]) {
+      const correctOptionIndex = question.options.findIndex(opt => opt.isCorrect);
+      if (correctOptionIndex !== finalAnswers[index]) {
         areasForImprovement.push(question.subject);
       }
     });
@@ -102,12 +129,27 @@ export default function VisualAssessmentScreen() {
     const uniqueAreasForImprovement = [...new Set(areasForImprovement)];
 
     if (activeChild) {
-      const childRef = doc(db, 'children', activeChild.id);
-      await updateDoc(childRef, {
-        areasForImprovement: arrayUnion(...uniqueAreasForImprovement),
-      });
-      await updateBaselineAssessmentStatus(activeChild.id, true, score);
-      router.replace('/Home');
+      try {
+        const childRef = doc(db, 'children', activeChild.id);
+        const baselineResults = {
+          score: score,
+          totalQuestions: questions.length,
+          answers: finalAnswers,
+          timestamp: new Date().toISOString(),
+        };
+        await updateDoc(childRef, {
+          areasForImprovement: arrayUnion(...uniqueAreasForImprovement),
+          baselineResults: baselineResults,
+        });
+        await updateBaselineAssessmentStatus(activeChild.id, true, score);
+        router.replace('/Home');
+      } catch (error) {
+        console.error("Error finishing assessment:", error);
+      } finally {
+        setIsFinishing(false);
+      }
+    } else {
+      setIsFinishing(false);
     }
   };
 
@@ -120,10 +162,19 @@ export default function VisualAssessmentScreen() {
     );
   }
 
+  if (isFinishing) {
+    return (
+      <YStack flex={1} justifyContent="center" alignItems="center">
+        <Spinner size="large" color="$orange10" />
+        <Paragraph>Calculating Results...</Paragraph>
+      </YStack>
+    );
+  }
+  
   if (questions.length === 0) {
     return (
         <YStack flex={1} justifyContent="center" alignItems="center">
-            <Paragraph>Could not load questions. Please check the console for more information.</Paragraph>
+            <Paragraph>Could not load questions. Please try again later.</Paragraph>
         </YStack>
     );
   }
@@ -135,16 +186,27 @@ export default function VisualAssessmentScreen() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <YStack flex={1} alignItems="center" space="$4" padding="$4" backgroundColor="$background">
           <H2 fontFamily="$heading" color="$color">Visual Assessment</H2>
-          <Paragraph fontFamily="$body" color="$color">Score: {score}</Paragraph>
-          <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3" width="100%">
+          <Paragraph fontFamily="$body" color="$color">
+            Question {currentQuestionIndex + 1} of {questions.length}
+          </Paragraph>
+          
+          <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3" width="100%" alignItems="center">
             <Paragraph fontFamily="$body" color="$color" fontSize="$5" textAlign="center">{currentQuestion.questionText}</Paragraph>
+            {currentQuestion.questionImage && (
+              <Image
+                source={{ uri: currentQuestion.questionImage, width: 150, height: 150 }}
+                alt="Question Image"
+                borderRadius="$3"
+                marginVertical="$3"
+              />
+            )}
           </YStack>
+
           <XStack space="$4" flexWrap="wrap" justifyContent="center">
             {currentQuestion.options.map((option, index) => {
               const isSelected = selectedAnswer === index;
-              const isCorrect = questions[currentQuestionIndex].correctAnswerIndex === index;
-              const borderColor = isSelected ? (isCorrect ? '$green9' : '$red9') : '$gray7';
-              const backgroundColor = isSelected ? (isCorrect ? '$green3' : '$red3') : '$gray2';
+              const borderColor = isSelected ? '$blue9' : '$gray7';
+              const backgroundColor = isSelected ? '$blue3' : '$gray2';
 
               return (
                 <Button
@@ -162,7 +224,7 @@ export default function VisualAssessmentScreen() {
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <Image source={{ uri: option, width: 100, height: 100 }} />
+                  <Image source={{ uri: option.image, width: 100, height: 100 }} />
                 </Button>
               );
             })}
