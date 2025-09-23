@@ -42,6 +42,12 @@ export default function VisualAssessmentScreen() {
         const childDoc = await getDoc(childRef);
         const childData = childDoc.data();
 
+        if (childData && childData.baselineResults) {
+          // Assessment is already complete, redirect to home.
+          router.replace('/Home');
+          return;
+        }
+
         // Data validation check
         const isValidAssessment = 
           childData && 
@@ -107,7 +113,7 @@ export default function VisualAssessmentScreen() {
       } else {
         finishAssessment(newAnswers);
       }
-    }, 1000); // 1 second delay to show feedback
+    }, 300); // Reduced delay
   };
 
   const finishAssessment = async (finalAnswers: number[]) => {
@@ -127,6 +133,7 @@ export default function VisualAssessmentScreen() {
         const childRef = doc(db, 'children', activeChild.id);
         const baselineResults = {
           score: score,
+          totalQuestions: questions.length,
           answers: finalAnswers,
           timestamp: new Date().toISOString(),
         };
@@ -179,7 +186,9 @@ export default function VisualAssessmentScreen() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <YStack flex={1} alignItems="center" space="$4" padding="$4" backgroundColor="$background">
           <H2 fontFamily="$heading" color="$color">Visual Assessment</H2>
-          <Paragraph fontFamily="$body" color="$color">Score: {score}</Paragraph>
+          <Paragraph fontFamily="$body" color="$color">
+            Question {currentQuestionIndex + 1} of {questions.length}
+          </Paragraph>
           
           <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3" width="100%" alignItems="center">
             <Paragraph fontFamily="$body" color="$color" fontSize="$5" textAlign="center">{currentQuestion.questionText}</Paragraph>
@@ -196,8 +205,8 @@ export default function VisualAssessmentScreen() {
           <XStack space="$4" flexWrap="wrap" justifyContent="center">
             {currentQuestion.options.map((option, index) => {
               const isSelected = selectedAnswer === index;
-              const borderColor = isSelected ? (option.isCorrect ? '$green9' : '$red9') : '$gray7';
-              const backgroundColor = isSelected ? (option.isCorrect ? '$green3' : '$red3') : '$gray2';
+              const borderColor = isSelected ? '$blue9' : '$gray7';
+              const backgroundColor = isSelected ? '$blue3' : '$gray2';
 
               return (
                 <Button
