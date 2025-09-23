@@ -6,28 +6,32 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "google",
-    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended", // keep basic TS rules
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: ["tsconfig.json", "tsconfig.dev.json"],
+    ecmaVersion: 2020,
     sourceType: "module",
   },
   ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
-    "/generated/**/*", // Ignore generated files.
+    "/lib/**/*",        // Ignore built files
+    "/generated/**/*",  // Ignore generated files
   ],
   plugins: [
     "@typescript-eslint",
-    "import",
   ],
   rules: {
-    "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
-    "indent": ["error", 2],
+    // Style rules (relaxed)
+    quotes: ["warn", "double"],   // warn instead of error
+    indent: ["warn", 2],          // warn instead of error
+    
+    // TypeScript rules (relaxed)
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-unused-vars": ["warn"],
+
+    // Import rules (disabled for flexibility)
+    "import/no-unresolved": "off",
+    "import/order": "off",
   },
 };

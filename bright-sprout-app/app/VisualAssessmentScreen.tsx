@@ -1,35 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { YStack, H2, Paragraph, Spinner, Button, Image, XStack, ScrollView } from 'tamagui';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { YStack, H2, H3, Paragraph, Spinner, Button, ScrollView } from 'tamagui';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useChild } from './ChildContext';
 import { useRouter } from 'expo-router';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CustomHeader } from '../components/CustomHeader';
 
-// Define the structure of a question
-interface Question {
-  questionText: string;
-  questionShape?: string; // Add questionShape here
-  options: string[];
-  correctAnswerIndex: number;
+// Define the structure of a Game
+interface Game {
   subject: string;
+  gradeBand: string;
+  title: string;
+  description: string;
+  instructions: string;
+  interaction: string;
+  skillsTested: string[];
+  teacherInterpretation: string;
+  learningOutcomes: string[];
 }
 
 export default function VisualAssessmentScreen() {
   const { activeChild, updateBaselineAssessmentStatus } = useChild();
   const router = useRouter();
-  const [subjects, setSubjects] = useState<string[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isFinishing, setIsFinishing] = useState(false);
-  const [baselineCompleted, setBaselineCompleted] = useState(false);
-  const [completedResults, setCompletedResults] = useState<any | null>(null);
   const functions = getFunctions();
 
   useEffect(() => {
@@ -37,7 +33,7 @@ export default function VisualAssessmentScreen() {
       if (!activeChild) {
         return;
       }
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
 
       try {
         const childRef = doc(db, 'children', activeChild.id);
@@ -45,55 +41,30 @@ export default function VisualAssessmentScreen() {
         const childData = childDoc.data();
 
         if (childData && childData.baselineAssessment) {
-          // Baseline questions exist
-          setQuestions(childData.baselineAssessment);
-
-          if (childData.baselineResults) {
-            // Baseline was completed, load results
-            setBaselineCompleted(true);
-            setCompletedResults(childData.baselineResults);
-            setIsLoading(false);
-            return; // Exit as baseline is completed and results are displayed
-          }
-          // If only baselineAssessment exists, proceed to take the assessment
-        }
-
-        // If no baselineAssessment or if it exists but not completed, generate a new one
-        const generateAssessmentFunction = httpsCallable<{ age: number; grade: string; subjects: string[] }, { questions: any[] }>(functions, 'generateVisualAssessment');
-        const result = await generateAssessmentFunction({
-          age: activeChild.age,
-          grade: activeChild.grade,
-          subjects: ['visual'],
-        });
-        const assessment = result.data;
-
-        if (assessment && assessment.questions) {
-          const transformedQuestions = assessment.questions.map((q: any) => {
-            const correctAnswerIndex = q.options.findIndex((opt: any) => opt.isCorrect);
-            return {
-              questionText: q.questionText,
-              questionShape: q.questionShape,
-              options: q.options.map((opt: any) => opt.shape),
-              correctAnswerIndex: correctAnswerIndex,
-              subject: q.subject,
-            };
-          });
-          setQuestions(transformedQuestions);
-
-          // Save the newly generated baseline to Firestore
-          await updateDoc(childRef, {
-            baselineAssessment: transformedQuestions,
-          });
-
+          setGames(childData.baselineAssessment);
         } else {
-          console.error("Assessment data or questions are missing.");
-          setQuestions([]);
+          const generateAssessmentFunction = httpsCallable<{ age: number; grade: string; }, { games: Game[] }>(functions, 'generateVisualAssessment');
+          const result = await generateAssessmentFunction({
+            age: activeChild.age,
+            grade: activeChild.grade,
+          });
+          const assessment = result.data;
+
+          if (assessment && assessment.games) {
+            setGames(assessment.games);
+            await updateDoc(childRef, {
+              baselineAssessment: assessment.games,
+            });
+          } else {
+            console.error("Assessment data or games are missing.");
+            setGames([]);
+          }
         }
       } catch (error) {
         console.error("Error generating assessment:", error);
-        setQuestions([]);
+        setGames([]);
       } finally {
-        setIsLoading(false); // End loading
+        setIsLoading(false);
       }
     };
 
@@ -102,50 +73,11 @@ export default function VisualAssessmentScreen() {
     }
   }, [activeChild, functions]);
 
-  const handleAnswer = (optionIndex: number) => {
-    setSelectedAnswer(optionIndex);
-    const isCorrect = questions[currentQuestionIndex].correctAnswerIndex === optionIndex;
-    if (isCorrect) {
-      setScore(score + 1);
-    }
-
-    setTimeout(() => {
-      setSelectedAnswer(null);
-      const newAnswers = [...answers, optionIndex];
-      setAnswers(newAnswers);
-
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        finishAssessment(newAnswers);
-      }
-    }, 1000);
-  };
-
-  const finishAssessment = async (finalAnswers: number[]) => {
+  const finishAssessment = async () => {
     setIsFinishing(true);
-    const areasForImprovement: string[] = [];
-    questions.forEach((question, index) => {
-      if (question.correctAnswerIndex !== finalAnswers[index]) {
-        areasForImprovement.push(question.subject);
-      }
-    });
-
-    const uniqueAreasForImprovement = [...new Set(areasForImprovement)];
-
     if (activeChild) {
       try {
-        const childRef = doc(db, 'children', activeChild.id);
-        const baselineResults = {
-          score: score,
-          answers: finalAnswers,
-          timestamp: new Date().toISOString(), // Save a timestamp
-        };
-        await updateDoc(childRef, {
-          areasForImprovement: arrayUnion(...uniqueAreasForImprovement),
-          baselineResults: baselineResults, // Add this line
-        });
-        await updateBaselineAssessmentStatus(activeChild.id, true, score);
+        await updateBaselineAssessmentStatus(activeChild.id, true, 0); // Score is 0 for now
         router.replace('/Home');
       } catch (error) {
         console.error("Error finishing assessment:", error);
@@ -161,7 +93,7 @@ export default function VisualAssessmentScreen() {
     return (
       <YStack flex={1} justifyContent="center" alignItems="center">
         <Spinner size="large" color="$orange10" />
-        <Paragraph>Loading Assessment...</Paragraph>
+        <Paragraph>Generating Assessment Games...</Paragraph>
       </YStack>
     );
   }
@@ -170,96 +102,36 @@ export default function VisualAssessmentScreen() {
     return (
       <YStack flex={1} justifyContent="center" alignItems="center">
         <Spinner size="large" color="$orange10" />
-        <Paragraph>Generating Baseline...</Paragraph>
+        <Paragraph>Finalizing Assessment...</Paragraph>
       </YStack>
     );
   }
-
-  if (baselineCompleted) {
-    // Render completed baseline results
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <YStack flex={1} alignItems="center" space="$4" padding="$4" backgroundColor="$background">
-            <H2 fontFamily="$heading" color="$color">Baseline Assessment Completed</H2>
-            <Paragraph fontFamily="$body" color="$color">
-              Your child has completed the visual assessment.
-            </Paragraph>
-            <Paragraph fontFamily="$body" color="$color">
-              Score: {completedResults?.score} / {questions.length}
-            </Paragraph>
-            <Paragraph fontFamily="$body" color="$color">
-              Completed On: {new Date(completedResults?.timestamp).toLocaleDateString()}
-            </Paragraph>
-            {/* Add a button to retake the assessment if desired */}
-            <Button onPress={() => {
-                // Logic to clear baseline results and allow retake
-                // This would involve updating Firestore to remove baselineAssessment and baselineResults
-                // and then resetting local state.
-                // For now, just navigate home or show a message.
-                router.replace('/Home');
-            }}>Go to Home</Button>
-          </YStack>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
-
-  if (questions.length === 0) {
-    return (
-        <YStack flex={1} justifyContent="center" alignItems="center">
-            <Paragraph>Could not load questions. Please check the console for more information.</Paragraph>
-        </YStack>
-    );
-  }
-
-  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <YStack flex={1} alignItems="center" space="$4" padding="$4" backgroundColor="$background">
-          <H2 fontFamily="$heading" color="$color">Visual Assessment</H2>
-          <Paragraph fontFamily="$body" color="$color">Score: {score}</Paragraph>
-          <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3" width="100%">
-            <Paragraph fontFamily="$body" color="$color" fontSize="$5" textAlign="center">{currentQuestion.questionText}</Paragraph>
-            {currentQuestion.questionShape && (
-              <Image
-                source={{ uri: currentQuestion.questionShape, width: 150, height: 150 }}
-                alt="Question Image"
-                borderRadius="$3"
-                marginVertical="$3"
-              />
-            )}
-          </YStack>
-          <XStack space="$4" flexWrap="wrap" justifyContent="center">
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
-              const isCorrect = questions[currentQuestionIndex].correctAnswerIndex === index;
-              const borderColor = isSelected ? (isCorrect ? '$green9' : '$red9') : '$gray7';
-              const backgroundColor = isSelected ? (isCorrect ? '$green3' : '$red3') : '$gray2';
-
-              return (
-                <Button
-                  key={index}
-                  onPress={() => handleAnswer(index)}
-                  disabled={selectedAnswer !== null}
-                  borderColor={borderColor}
-                  borderWidth={2}
-                  backgroundColor={backgroundColor}
-                  borderRadius="$4"
-                  padding="$3"
-                  marginVertical="$2"
-                  width={120}
-                  height={120}
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Image source={{ uri: option, width: 100, height: 100 }} />
-                </Button>
-              );
-            })}
-          </XStack>
+          <H2 fontFamily="$heading" color="$color">Baseline Assessment Games</H2>
+          {games.length > 0 ? (
+            <YStack width="100%" space="$4">
+              {games.map((game, index) => (
+                <YStack key={index} space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
+                  <H3 fontFamily="$heading" color="$color">{game.title}</H3>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Subject:</strong> {game.subject}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Grade Band:</strong> {game.gradeBand}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Description:</strong> {game.description}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Instructions:</strong> {game.instructions}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Interaction:</strong> {game.interaction}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Skills Tested:</strong> {game.skillsTested.join(', ')}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Teacher Interpretation:</strong> {game.teacherInterpretation}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color"><strong>Learning Outcomes:</strong> {game.learningOutcomes.join(', ')}</Paragraph>
+                </YStack>
+              ))}
+              <Button onPress={finishAssessment} backgroundColor="$green10" color="white">Complete Assessment</Button>
+            </YStack>
+          ) : (
+            <Paragraph>Could not load assessment games. Please try again later.</Paragraph>
+          )}
         </YStack>
       </ScrollView>
     </SafeAreaView>
