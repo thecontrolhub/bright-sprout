@@ -46,28 +46,33 @@ export const generateVisualAssessment = onCall<GenerateAssessmentData>(async (re
     const model = genAI.getGenerativeModel({model: "gemini-2.0-flash"});
 
     const prompt = `
-Design a baseline assessment in the form of age-appropriate learning games that align with Cambridge curriculum standards for a child of age ${age} in grade ${grade}.
-
-The games should adapt to different ages, grades, and subjects (e.g., Cambridge Primary, Lower Secondary, IGCSE). The subjects for this assessment are: ${subjects.join(", ")}.
-
-Each game should be fun and interactive while testing key Cambridge skills such as recall, understanding, application, problem-solving, and communication.
-
-For each subject, create at least one example game for the specified grade band.
-
-Provide the output as a JSON object with a single key "games" that contains an array of game objects. Each game object should have the following structure:
+Generate a visual assessment with 5 questions for a child of age ${age} in grade ${grade}.
+The assessment should be a visual matching game.
+The questions should cover the following subjects: ${subjects.join(", ")}.
+Each question should have a main image and 3 option images. The child needs to select the option image that matches the main image.
+Return the assessment as a JSON array of objects. Each object should have the following format:
 {
-  "subject": "The subject of the game (e.g., Math, English, Science)",
-  "gradeBand": "The Cambridge curriculum grade band (e.g., Primary, Lower Secondary, IGCSE)",
-  "title": "The title of the game",
-  "description": "A brief description of the game",
-  "instructions": "Clear instructions for how to play the game",
-  "interaction": "How the learner interacts with the game (e.g., choices, puzzles, storytelling, challenges)",
-  "skillsTested": ["An", "array", "of", "skills", "tested"],
-  "teacherInterpretation": "How teachers can interpret the results to identify what the learner needs to improve on.",
-  "learningOutcomes": ["An", "array", "of", "Cambridge", "learning", "outcomes", "covered"]
+    "questionText": "A simple instruction for the child, e.g., 'Which one is a fruit?'",
+    "questionImage": "A placeholder image URL from 'https://placehold.co/150x150?text=...", representing the main image.",
+    "subject": "The subject of the question",
+    "options": [
+        {
+            "image": "A placeholder image URL for option 1",
+            "isCorrect": true
+        },
+        {
+            "image": "A placeholder image URL for option 2",
+            "isCorrect": false
+        },
+        {
+            "image": "A placeholder image URL for option 3",
+            "isCorrect": false
+        }
+    ]
 }
-
-Do not include any other text or explanation in your response, just the JSON object.
+Make sure the placeholder text in the image URLs is descriptive of the image content (e.g., 'Apple', 'Car', 'Dog').
+Ensure that for each question, exactly one option has "isCorrect" set to true.
+Do not include any other text or explanation in your response, just the JSON array.
 `;
 
     try {
@@ -75,24 +80,14 @@ Do not include any other text or explanation in your response, just the JSON obj
       const response = await result.response;
       const text = response.text();
 
-      // Extract the JSON from the Markdown code block
       const jsonMatch = text.match(/```json\n([\s\S]*)\n```/);
       const jsonString = jsonMatch ?
         jsonMatch[1] : text.replace(/```json/g, "").replace(/```/g, "").trim();
 
-      // Attempt to parse the text as JSON
-      const assessment = JSON.parse(jsonString);
+      const questions = JSON.parse(jsonString);
 
-      // Basic validation of the parsed assessment
-      if (!assessment.games || !Array.isArray(assessment.games) || assessment.games.length === 0) {
-        throw new HttpsError(
-          "internal",
-          "Gemini did not return a valid array of games.",
-        );
-      }
-      // Optional: Add more detailed validation for each game object
-
-      return {success: true, games: assessment.games};
+      // No success wrapper, just return the questions array directly
+      return questions;
     } catch (error: any) {
       console.error("Error generating assessment with Gemini:", error);
       throw new HttpsError(
