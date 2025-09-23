@@ -20,12 +20,26 @@ interface GameExample {
   skillsTested: string[];
 }
 
+interface LearningCourseModule {
+  title: string;
+  description: string;
+  activities: string[];
+  resources: string[]; // URLs or textual resources
+}
+
+interface LearningCourse {
+  courseTitle: string;
+  courseDescription: string;
+  modules: LearningCourseModule[];
+}
+
 interface AdaptiveAssessmentResponse {
   strengths: string[];
   weaknesses: string[];
   suggestedLearningPath: LearningPathStep[];
   exampleGames: GameExample[];
   resultsToLearningPathMapping: string; // A textual description of how results map to the path
+  learningCourse: LearningCourse; // New field
 }
 
 interface Question {
@@ -181,6 +195,27 @@ export default function LearningPathScreen() {
             <H3 fontFamily="$heading" color="$color">Mapping Analysis:</H3>
             <Paragraph fontFamily="$body" color="$color">{learningPath.resultsToLearningPathMapping}</Paragraph>
           </YStack>
+
+          {learningPath.learningCourse && (
+            <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
+              <H3 fontFamily="$heading" color="$color">Learning Course: {learningPath.learningCourse.courseTitle}</H3>
+              <Paragraph fontFamily="$body" color="$color">{learningPath.learningCourse.courseDescription}</Paragraph>
+              {learningPath.learningCourse.modules.map((module, modIndex) => (
+                <YStack key={modIndex} space="$1" paddingVertical="$2">
+                  <Paragraph fontFamily="$body" color="$color" fontWeight="bold">{modIndex + 1}. {module.title}</Paragraph>
+                  <Paragraph fontFamily="$body" color="$color">  {module.description}</Paragraph>
+                  <YStack paddingLeft="$3">
+                    {module.activities.map((activity, actIndex) => (
+                      <Paragraph key={actIndex} fontFamily="$body" color="$color">- Activity: {activity}</Paragraph>
+                    ))}
+                    {module.resources.map((resource, resIndex) => (
+                      <Paragraph key={resIndex} fontFamily="$body" color="$color">- Resource: {resource}</Paragraph>
+                    ))}
+                  </YStack>
+                </YStack>
+              ))}
+            </YStack>
+          )}
 
           <Button onPress={() => router.replace('/Home')} backgroundColor="$blue10" color="white">Go to Home</Button>
         </YStack>

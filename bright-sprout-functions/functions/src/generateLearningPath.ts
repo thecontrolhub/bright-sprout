@@ -1,5 +1,7 @@
 import {onCall, HttpsError} from "firebase-functions/v2/https";
 import {GoogleGenerativeAI} from "@google/generative-ai";
+import * as admin from "firebase-admin";
+
 interface LearningPathStep {
   description: string;
   difficulty: 'easy' | 'medium' | 'hard' | 'enrichment';
@@ -15,12 +17,26 @@ interface GameExample {
   skillsTested: string[];
 }
 
+interface LearningCourseModule {
+  title: string;
+  description: string;
+  activities: string[];
+  resources: string[]; // URLs or textual resources
+}
+
+interface LearningCourse {
+  courseTitle: string;
+  courseDescription: string;
+  modules: LearningCourseModule[];
+}
+
 interface AdaptiveAssessmentResponse {
   strengths: string[];
   weaknesses: string[];
   suggestedLearningPath: LearningPathStep[];
   exampleGames: GameExample[];
   resultsToLearningPathMapping: string; // A textual description of how results map to the path
+  learningCourse: LearningCourse; // New field
 }
 
 interface AnswerRecord {
@@ -133,6 +149,18 @@ export const generateLearningPath = onCall<GenerateLearningPathData>(async (requ
         }
       ];
       "resultsToLearningPathMapping": string; // A textual description of how results map to the path
+      "learningCourse": {
+        "courseTitle": string;
+        "courseDescription": string;
+        "modules": [
+          {
+            "title": string;
+            "description": string;
+            "activities": string[];
+            "resources": string[]; // URLs or textual resources
+          }
+        ];
+      };
     }
     Do not include any other text or explanation in your response, just the JSON object.
     `;
