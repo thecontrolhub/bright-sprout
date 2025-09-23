@@ -86,7 +86,6 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    console.log(activeChild.baselineAssessmentCompleted)
     if (activeChild && !activeChild.baselineAssessmentCompleted) {
       router.replace('/VisualAssessmentScreen');
     }
@@ -101,7 +100,32 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         {activeChild ? (
           <YStack space="$4">
-            <H2 color="$color" textAlign="center" fontFamily="$heading">Your Learning Path for {activeChild.name}</H2>
+            <>
+              <H2 color="$color" textAlign="center" fontFamily="$heading">Your Learning Path for {activeChild.name}</H2>
+
+              {activeChild.baselineAssessmentCompleted && activeChild.baselineResults && activeChild.baselineAssessment ? (
+                <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
+                  <H4 color="$gray7" fontFamily="$heading">Baseline Assessment Results</H4>
+                  <Paragraph color="$color" fontFamily="$body">
+                    Score: {activeChild.baselineResults.score} / {activeChild.baselineAssessment.length}
+                  </Paragraph>
+                  <Paragraph color="$color" fontFamily="$body">
+                    Completed On: {new Date(activeChild.baselineResults.timestamp).toLocaleDateString()}
+                  </Paragraph>
+                  {/* Optionally, add a button to view detailed results or retake */}
+                </YStack>
+              ) : (
+                <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
+                  <H4 color="$gray7" fontFamily="$heading">Baseline Assessment</H4>
+                  <Paragraph color="$color" fontFamily="$body">
+                    Baseline assessment not yet completed. Please complete it to unlock your personalized learning path.
+                  </Paragraph>
+                  <PrimaryButton onPress={() => router.replace('/VisualAssessmentScreen')}>
+                    Start Baseline Assessment
+                  </PrimaryButton>
+                </YStack>
+              )}
+            </>
 
             <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
               <H4 color="$gray7" fontFamily="$heading">Overall Progress</H4>
@@ -110,7 +134,6 @@ export default function HomeScreen() {
                 <CustomProgressBar progress={0.3} color={"$primary"} unfilledColor={"$green4"} height={18} borderRadius={9} />
               </YStack>
             </YStack>
-
             <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
               <H4 color="$gray7" fontFamily="$heading">Current Lessons</H4>
               {lessons.map((lesson, index) => (

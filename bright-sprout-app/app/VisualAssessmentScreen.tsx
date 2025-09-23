@@ -28,6 +28,8 @@ export default function VisualAssessmentScreen() {
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isFinishing, setIsFinishing] = useState(false);
+  const [baselineCompleted, setBaselineCompleted] = useState(false);
+  const [completedResults, setCompletedResults] = useState<any | null>(null);
   const functions = getFunctions();
 
   useEffect(() => {
@@ -43,13 +45,20 @@ export default function VisualAssessmentScreen() {
         const childData = childDoc.data();
 
         if (childData && childData.baselineAssessment) {
-          // Load existing baseline
+          // Baseline questions exist
           setQuestions(childData.baselineAssessment);
-          setIsLoading(false);
-          return; // Exit as baseline is loaded
+
+          if (childData.baselineResults) {
+            // Baseline was completed, load results
+            setBaselineCompleted(true);
+            setCompletedResults(childData.baselineResults);
+            setIsLoading(false);
+            return; // Exit as baseline is completed and results are displayed
+          }
+          // If only baselineAssessment exists, proceed to take the assessment
         }
 
-        // If no baseline, generate a new one
+        // If no baselineAssessment or if it exists but not completed, generate a new one
         const generateAssessmentFunction = httpsCallable<{ age: number; grade: string; subjects: string[] }, { questions: any[] }>(functions, 'generateVisualAssessment');
         const result = await generateAssessmentFunction({
           age: activeChild.age,
@@ -163,6 +172,36 @@ export default function VisualAssessmentScreen() {
         <Spinner size="large" color="$orange10" />
         <Paragraph>Generating Baseline...</Paragraph>
       </YStack>
+    );
+  }
+
+  if (baselineCompleted) {
+    // Render completed baseline results
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <YStack flex={1} alignItems="center" space="$4" padding="$4" backgroundColor="$background">
+            <H2 fontFamily="$heading" color="$color">Baseline Assessment Completed</H2>
+            <Paragraph fontFamily="$body" color="$color">
+              Your child has completed the visual assessment.
+            </Paragraph>
+            <Paragraph fontFamily="$body" color="$color">
+              Score: {completedResults?.score} / {questions.length}
+            </Paragraph>
+            <Paragraph fontFamily="$body" color="$color">
+              Completed On: {new Date(completedResults?.timestamp).toLocaleDateString()}
+            </Paragraph>
+            {/* Add a button to retake the assessment if desired */}
+            <Button onPress={() => {
+                // Logic to clear baseline results and allow retake
+                // This would involve updating Firestore to remove baselineAssessment and baselineResults
+                // and then resetting local state.
+                // For now, just navigate home or show a message.
+                router.replace('/Home');
+            }}>Go to Home</Button>
+          </YStack>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
