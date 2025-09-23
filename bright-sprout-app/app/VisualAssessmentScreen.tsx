@@ -142,7 +142,7 @@ export default function VisualAssessmentScreen() {
           baselineResults: baselineResults,
         });
         await updateBaselineAssessmentStatus(activeChild.id, true, score);
-        router.replace('/Home');
+        router.replace({ pathname: '/LearningPathScreen', params: { results: JSON.stringify(baselineResults), areas: JSON.stringify(uniqueAreasForImprovement) } });
       } catch (error) {
         console.error("Error finishing assessment:", error);
       } finally {
@@ -185,7 +185,7 @@ export default function VisualAssessmentScreen() {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <YStack flex={1} alignItems="center" space="$4" padding="$4" backgroundColor="$background">
-          <H2 fontFamily="$heading" color="$color">Visual Assessment</H2>
+          <H2 fontFamily="$heading" color="$color">Assessment</H2>
           <Paragraph fontFamily="$body" color="$color">
             Question {currentQuestionIndex + 1} of {questions.length}
           </Paragraph>

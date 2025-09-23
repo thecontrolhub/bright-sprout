@@ -9,3 +9,4 @@ export {setParentClaimOnSignUp} from "./setParentClaimOnSignUp";
 export {updateChildPassword} from "./updateChildPassword";
 export {generateBaselineAssessment} from "./generateBaselineAssessment";
 export {generateVisualAssessment} from "./generateVisualAssessment";
+export {generateLearningPath} from "./generateLearningPath";

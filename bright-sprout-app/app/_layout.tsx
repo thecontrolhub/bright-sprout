@@ -154,6 +154,7 @@ function RootLayoutNav() {
           <Stack.Screen name="ChangePasswordScreen" options={{ headerShown: false }} />
           <Stack.Screen name="BankingDetailsScreen" options={{ headerShown: false }} />
           <Stack.Screen name="VisualAssessmentScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="LearningPathScreen" options={{ headerShown: false }} />
           
 
           <Stack.Screen
