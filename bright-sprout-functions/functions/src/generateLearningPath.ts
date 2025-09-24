@@ -1,5 +1,6 @@
 import {onCall, HttpsError} from "firebase-functions/v2/https";
 import {GoogleGenerativeAI} from "@google/generative-ai";
+import * as admin from "firebase-admin";
 
 interface LearningPathStep {
   description: string;
@@ -48,6 +49,7 @@ interface GenerateLearningPathData {
   age: number;
   grade: string;
   performanceHistory: AnswerRecord[];
+  childUid: string; // New field
 }
 
 export const generateLearningPath = onCall<GenerateLearningPathData>(async (request) => {
@@ -58,14 +60,16 @@ export const generateLearningPath = onCall<GenerateLearningPathData>(async (requ
       );
     }
 
-    const {age, grade, performanceHistory} = request.data;
+    const {age, grade, performanceHistory, childUid} = request.data;
 
-    if (!age || !grade || !performanceHistory || !Array.isArray(performanceHistory)) {
+    if (!age || !grade || !performanceHistory || !Array.isArray(performanceHistory) || !childUid) {
       throw new HttpsError(
         "invalid-argument",
-        "Missing required fields: age, grade, performanceHistory (array).",
+        "Missing required fields: age, grade, performanceHistory (array), and childUid.",
       );
     }
+
+    const db = admin.firestore();
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     if (!GEMINI_API_KEY) {
@@ -148,7 +152,7 @@ export const generateLearningPath = onCall<GenerateLearningPathData>(async (requ
         }
       ];
       "resultsToLearningPathMapping": string; // A textual description of how results map to the path
-      "learningCourse": {
+      "learningCourse": { // NEW FIELD
         "courseTitle": string;
         "courseDescription": string;
         "modules": [
@@ -174,6 +178,13 @@ export const generateLearningPath = onCall<GenerateLearningPathData>(async (requ
         jsonMatch[1] : text.replace(/```json/g, "").replace(/```/g, "").trim();
 
       const learningPathResponse: AdaptiveAssessmentResponse = JSON.parse(jsonString);
+
+      // Save the generated learning path to Firestore
+      const childRef = db.collection('children').doc(childUid);
+      await childRef.update({
+        learningPath: learningPathResponse,
+        learningPathGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
 
       return learningPathResponse;
     } catch (error: any) {

@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useChild } from '../app/ChildContext'; // Adjust path as needed
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 interface LearningPathStep {
   description: string;
@@ -104,11 +106,12 @@ export default function LearningPathScreen() {
         // router.replace({ pathname: '/LearningPathScreen', params: { results: JSON.stringify(baselineResults), areas: JSON.stringify(uniqueAreasForImprovement), questions: JSON.stringify(questions) } });
         // And then parse it here.
 
-        const generateLearningPathFunction = httpsCallable<{ age: number; grade: string; performanceHistory: any[] }, AdaptiveAssessmentResponse>(functions, 'generateLearningPath');
+        const generateLearningPathFunction = httpsCallable<{ age: number; grade: string; performanceHistory: any[]; childUid: string }, AdaptiveAssessmentResponse>(functions, 'generateLearningPath');
         const response = await generateLearningPathFunction({
           age: activeChild.age,
           grade: activeChild.grade,
           performanceHistory: performanceHistory, // Pass the reconstructed history
+          childUid: activeChild.id, // Pass childUid
         });
         setLearningPath(response.data);
 
@@ -141,7 +144,7 @@ export default function LearningPathScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} backgroundColor="$background">
       <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
         <YStack space="$4">
           <H2 fontFamily="$heading" color="$color" textAlign="center">Your Personalized Learning Path</H2>
