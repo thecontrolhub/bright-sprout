@@ -25,19 +25,24 @@ interface UserProfile {
   address?: string;
 }
 
-interface Lesson {
+// New interfaces for Learning Course
+interface LearningCourseModule {
   title: string;
-  icon: React.ElementType; // Change to React.ElementType
-  progress: number;
-  color: string;
+  description: string;
+  activities: string[];
+  resources: string[];
 }
 
-const lessons: Lesson[] = [
-  { title: 'Introduction to Photosynthesis', icon: Leaf, progress: 1, color: '#58CC02' },
-  { title: 'The Cell Structure', icon: Circle, progress: 0.6, color: '#FFC107' },
-  { title: 'Genetics and Heredity', icon: GitFork, progress: 0.2, color: '#F44336' },
-  { title: 'The Human Body', icon: User, progress: 0, color: '#9C27B0' },
-];
+interface LearningCourse {
+  courseTitle: string;
+  courseDescription: string;
+  modules: LearningCourseModule[];
+}
+
+interface LearningPathData {
+  learningCourse: LearningCourse;
+  // Add other properties of AdaptiveAssessmentResponse if needed for display
+}
 
 const badges = [
   { name: 'First Steps', icon: Footprints, color: '#58CC02' },
@@ -45,16 +50,47 @@ const badges = [
   { name: 'Mastermind', icon: Lightbulb, color: '#F44336' },
 ];
 
+// Skeleton component for Home screen
+const HomeSkeleton = () => (
+  <YStack space="$4" padding="$4">
+    <YStack height={30} width="70%" backgroundColor="$gray3" borderRadius="$2" alignSelf="center" />
+
+    <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
+      <YStack height={20} width="50%" backgroundColor="$gray3" borderRadius="$2" />
+      <YStack height={60} backgroundColor="$gray3" borderRadius="$2" />
+    </YStack>
+
+    <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
+      <YStack height={20} width="40%" backgroundColor="$gray3" borderRadius="$2" />
+      {[1, 2, 3].map((i) => (
+        <XStack key={i} alignItems="center" backgroundColor="$gray3" borderRadius="$3" padding="$3" space="$3" height={60} />
+      ))}
+    </YStack>
+
+    <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
+      <YStack height={20} width="45%" backgroundColor="$gray3" borderRadius="$2" />
+      <XStack space="$3">
+        {[1, 2, 3].map((i) => (
+          <YStack key={i} backgroundColor="$gray3" borderRadius="$3" padding="$3" width={130} height={100} />
+        ))}
+      </XStack>
+    </YStack>
+  </YStack>
+);
+
 export default function HomeScreen() {
   const router = useRouter();
   const firebaseAuth = getAuth();
   const { activeChild, children, setActiveChild } = useChild();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const { setIsLoading } = useLoading();
+  const { setIsLoading: setGlobalIsLoading } = useLoading(); // Rename to avoid conflict
+  const [isHomeLoading, setIsHomeLoading] = useState(true); // Local loading state
+  const [childLearningPath, setChildLearningPath] = useState<LearningPathData | null>(null);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      setIsLoading(true);
+    const fetchUserProfileAndLearningPath = async () => {
+      setIsHomeLoading(true); // Start local loading
+      setGlobalIsLoading(true); // Start global loading
       try {
         const currentUser = auth.currentUser;
      
@@ -69,6 +105,10 @@ export default function HomeScreen() {
               name: childData.name,
               role: "Child",
             });
+            // Fetch learning path if available
+            if (childData.learningPath) {
+              setChildLearningPath(childData.learningPath as LearningPathData);
+            }
           } else {
             const userDocRef = doc(db, 'users', currentUser.uid);
             const userDocSnap = await getDoc(userDocRef);
@@ -79,11 +119,12 @@ export default function HomeScreen() {
           }
         }
       } finally {
-        setIsLoading(false);
+        setIsHomeLoading(false); // End local loading
+        setGlobalIsLoading(false); // End global loading
       }
     };
-    fetchUserProfile();
-  }, []);
+    fetchUserProfileAndLearningPath();
+  }, [activeChild]); // Depend on activeChild to refetch when it changes
 
   useEffect(() => {
     if (activeChild && !activeChild.baselineAssessmentCompleted) {
@@ -91,14 +132,12 @@ export default function HomeScreen() {
     }
   }, [activeChild, router]);
 
-  // Removed useFocusEffect for assessment check as per instructions.
-  // If this functionality is still needed, it should be re-evaluated in the context of expo-router.
-
-
   return (
     <YStack flex={1} backgroundColor="$background">
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-        {activeChild ? (
+        {isHomeLoading ? (
+          <HomeSkeleton />
+        ) : activeChild ? (
           <YStack space="$4">
             <>
               <H2 color="$color" textAlign="center" fontFamily="$heading">Your Learning Path for {activeChild.name}</H2>
@@ -107,7 +146,7 @@ export default function HomeScreen() {
                 <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
                   <H4 color="$gray7" fontFamily="$heading">Baseline Assessment Results</H4>
                   <Paragraph color="$color" fontFamily="$body">
-                    Score: {activeChild.baselineResults.score} / {activeChild.baselineAssessment.length}
+                    Score: {activeChild.baselineResults.score} / {activeChild.baselineResults.totalQuestions}
                   </Paragraph>
                   <Paragraph color="$color" fontFamily="$body">
                     Completed On: {new Date(activeChild.baselineResults.timestamp).toLocaleDateString()}
@@ -120,34 +159,45 @@ export default function HomeScreen() {
                   <Paragraph color="$color" fontFamily="$body">
                     Baseline assessment not yet completed. Please complete it to unlock your personalized learning path.
                   </Paragraph>
-                  <PrimaryButton onPress={() => router.replace('/VisualAssessmentScreen')}>
-                    Start Baseline Assessment
-                  </PrimaryButton>
+                  <PrimaryButton onPress={() => router.replace('/VisualAssessmentScreen')}>Start Baseline Assessment</PrimaryButton>
                 </YStack>
               )}
             </>
 
             <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
               <H4 color="$gray7" fontFamily="$heading">Overall Progress</H4>
-              <YStack backgroundColor="$green2" borderRadius="$2" padding="$3" alignItems="center">
-                <Paragraph color="$green10" fontFamily="$body">You've completed 3 out of 10 lessons!</Paragraph>
-                <CustomProgressBar progress={0.3} color={"$primary"} unfilledColor={"$green4"} height={18} borderRadius={9} />
-              </YStack>
+              {childLearningPath && childLearningPath.learningCourse ? (
+                <YStack backgroundColor="$green2" borderRadius="$2" padding="$3" alignItems="center">
+                  <Paragraph color="$green10" fontFamily="$body">
+                    You've completed 0 out of {childLearningPath.learningCourse.modules.length} modules!
+                  </Paragraph>
+                  <CustomProgressBar progress={0} color={"$primary"} unfilledColor={"$green4"} height={18} borderRadius={9} />
+                </YStack>
+              ) : (
+                <Paragraph color="$color" fontFamily="$body">No learning course available yet.</Paragraph>
+              )}
             </YStack>
             <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
               <H4 color="$gray7" fontFamily="$heading">Current Lessons</H4>
-              {lessons.map((lesson, index) => (
-                <XStack key={index} alignItems="center" backgroundColor="$gray1" borderRadius="$3" padding="$3" space="$3" shadow="$sm" borderWidth="$0.5" borderColor="$gray3">
-                  <YStack padding="$2" borderRadius="$2" backgroundColor={lesson.color}>
-                    <lesson.icon size={32} color="#fff" />
-                  </YStack>
-                  <YStack flex={1}>
-                    <Paragraph color="$color" fontWeight="bold" fontFamily="$body">{lesson.title}</Paragraph>
-                    <CustomProgressBar progress={lesson.progress} color={lesson.color} unfilledColor={"$gray6"} />
-                  </YStack>
-                  {lesson.progress === 1 && <CheckCircle size={32} color={"$green9"} />}
-                </XStack>
-              ))}
+              {childLearningPath && childLearningPath.learningCourse && childLearningPath.learningCourse.modules.length > 0 ? (
+                childLearningPath.learningCourse.modules.map((module, index) => (
+                  <XStack key={index} alignItems="center" backgroundColor="$gray1" borderRadius="$3" padding="$3" space="$3" shadow="$sm" borderWidth="$0.5" borderColor="$gray3">
+                    {/* Placeholder for module icon, can be added later */}
+                    <YStack padding="$2" borderRadius="$2" backgroundColor="$blue5">
+                      <Leaf size={32} color="#fff" />
+                    </YStack>
+                    <YStack flex={1}>
+                      <Paragraph color="$color" fontWeight="bold" fontFamily="$body">{module.title}</Paragraph>
+                      <Paragraph color="$color" fontFamily="$body" fontSize="$2">{module.description}</Paragraph>
+                      {/* Placeholder for module progress, can be added later */}
+                      <CustomProgressBar progress={0} color={"$primary"} unfilledColor={"$gray6"} />
+                    </YStack>
+                    {/* Placeholder for completion checkmark */}
+                  </XStack>
+                ))
+              ) : (
+                <Paragraph color="$color" fontFamily="$body">No current lessons available.</Paragraph>
+              )}
             </YStack>
 
             <YStack space="$2" backgroundColor="$gray1" padding="$4" borderRadius="$4" shadow="$md" borderWidth="$0.5" borderColor="$gray3">
