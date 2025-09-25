@@ -1,0 +1,139 @@
+[debug] [2025-09-25T14:09:53.894Z] ----------------------------------------------------------------------
+[debug] [2025-09-25T14:09:53.897Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\User\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-09-25T14:09:53.897Z] CLI Version:   14.16.0
+[debug] [2025-09-25T14:09:53.897Z] Platform:      win32
+[debug] [2025-09-25T14:09:53.897Z] Node Version:  v22.14.0
+[debug] [2025-09-25T14:09:53.898Z] Time:          Thu Sep 25 2025 16:09:53 GMT+0200 (South Africa Standard Time)
+[debug] [2025-09-25T14:09:53.898Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-09-25T14:09:54.103Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-25T14:09:54.103Z] > authorizing via signed-in user (brightsproutinfra@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\User\Work\bightsproutv2\bright-sprout\bright-sprout-app
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-09-25T14:10:02.328Z] Using project from CLI flag: bright-sprout
+[debug] [2025-09-25T14:10:02.329Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:10:02.329Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:10:02.330Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout [none]
+[debug] [2025-09-25T14:10:02.922Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout 200
+[debug] [2025-09-25T14:10:02.922Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout {"projectId":"bright-sprout","projectNumber":"564301011187","displayName":"bright-sprout","name":"projects/bright-sprout","resources":{"hostingSite":"bright-sprout","realtimeDatabaseInstance":"bright-sprout-default-rtdb"},"state":"ACTIVE","etag":"1_8e143516-8fb1-4f07-a1bb-07c2bf61145e"}
+[info] i  Using project bright-sprout (bright-sprout) 
+[info] 
+=== Hosting Setup
+[debug] [2025-09-25T14:10:03.289Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:10:03.289Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:10:03.289Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout [none]
+[debug] [2025-09-25T14:10:03.632Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout 200
+[debug] [2025-09-25T14:10:03.632Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout {"projectId":"bright-sprout","projectNumber":"564301011187","displayName":"bright-sprout","name":"projects/bright-sprout","resources":{"hostingSite":"bright-sprout","realtimeDatabaseInstance":"bright-sprout-default-rtdb"},"state":"ACTIVE","etag":"1_8e143516-8fb1-4f07-a1bb-07c2bf61145e"}
+[debug] [2025-09-25T14:27:04.157Z] ----------------------------------------------------------------------
+[debug] [2025-09-25T14:27:04.160Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\User\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2025-09-25T14:27:04.160Z] CLI Version:   14.16.0
+[debug] [2025-09-25T14:27:04.160Z] Platform:      win32
+[debug] [2025-09-25T14:27:04.160Z] Node Version:  v22.14.0
+[debug] [2025-09-25T14:27:04.161Z] Time:          Thu Sep 25 2025 16:27:04 GMT+0200 (South Africa Standard Time)
+[debug] [2025-09-25T14:27:04.161Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-09-25T14:27:04.368Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-25T14:27:04.369Z] > authorizing via signed-in user (brightsproutinfra@gmail.com)
+[debug] [2025-09-25T14:27:04.369Z] [iam] checking project bright-sprout for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-09-25T14:27:04.370Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:04.371Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:04.372Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/bright-sprout:testIamPermissions [none]
+[debug] [2025-09-25T14:27:04.372Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/bright-sprout:testIamPermissions x-goog-quota-user=projects/bright-sprout
+[debug] [2025-09-25T14:27:04.372Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bright-sprout:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-09-25T14:27:06.029Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/bright-sprout:testIamPermissions 200
+[debug] [2025-09-25T14:27:06.029Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bright-sprout:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-09-25T14:27:06.030Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:06.030Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:06.031Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout [none]
+[debug] [2025-09-25T14:27:06.584Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout 200
+[debug] [2025-09-25T14:27:06.584Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/bright-sprout {"projectId":"bright-sprout","projectNumber":"564301011187","displayName":"bright-sprout","name":"projects/bright-sprout","resources":{"hostingSite":"bright-sprout","realtimeDatabaseInstance":"bright-sprout-default-rtdb"},"state":"ACTIVE","etag":"1_8e143516-8fb1-4f07-a1bb-07c2bf61145e"}
+[info] 
+[info] === Deploying to 'bright-sprout'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2025-09-25T14:27:06.589Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:06.589Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:06.589Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions [none]
+[debug] [2025-09-25T14:27:06.590Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2025-09-25T14:27:08.590Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions 200
+[debug] [2025-09-25T14:27:08.590Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions {"name":"projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[bright-sprout]: beginning deploy... 
+[info] i  hosting[bright-sprout]: found 62 files in dist 
+[debug] [2025-09-25T14:27:08.612Z] [hosting] uploading with 200 concurrency
+[debug] [2025-09-25T14:27:09.304Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:09.304Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:09.307Z] [hosting] hash cache [ZGlzdA] stored for 62 files
+[debug] [2025-09-25T14:27:09.308Z] [hosting][hash queue][FINAL] {"max":683,"min":17,"avg":57.33870967741934,"active":0,"complete":62,"success":62,"errored":0,"retried":0,"total":62,"elapsed":695}
+[debug] [2025-09-25T14:27:09.308Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6:populateFiles [none]
+[debug] [2025-09-25T14:27:09.308Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6:populateFiles {"files":{"/metadata.json":"51dd7c63c77d34f74490e59eb3c8b0e7f5b23f745fc82424e9098eb830818f65","/favicon.ico":"c371997a6fbf221f7e8ace9af7273de03664cc5fbfef2e291f6bff2aa70ebff4","/assets/f3a81967828232c893d547162e922764":"ea1884ab250958773d50d48d6798bdce91a045b6d3aaeabdf4314bd832284426","/assets/dad2fa9f4394a630f0f9a0d6dabd44bc":"98c520bf528e207957446eb3b627b319851780adf8316423d023663cf5bb522a","/assets/d8e7601e3df962f83c62371ac14964d8":"61b67e5683f40de4c348fbf06f8f0a72918e50eddd41f1ab6ab85b47f48b8db0","/assets/d84e297c3b3e49a614248143d53e40ca":"5a616c6292845fdb33e10e0393de7568448b276cdf6a313217a112295a96c79a","/assets/d62ddc38b69aff346c20a28774933d6a":"1ff5c591c22cfa87dcd66ead5096d20d7a7ff6e545e99e7b46b1a9e772cb79a6","/assets/d8b800c443b8972542883e0b9de2bdc6":"23fdce0a02b9ef96dac5e6f6c3c9a990606ec15386d948617b615ad535c0a9ba","/assets/c3273c9e5321f20d1e42c2efae2578c4":"83eccb8d5ab5281e0ea28854a3fe0f127e0bda869d96532edd8a99190ac13d16","/assets/d1ea1496f9057eb392d5bbf3732a61b7":"0a480bcdcf300fe9491b2373c9ae721b253d96c5c9fbce2d7a880f708326615a","/assets/aff2c65b39a296d4f7e96d0f58169170":"d54b64c57ed817c84b69fb726ca8a6a1119869fdabf423b6158603642faa9873","/assets/c79c3606a1cf168006ad3979763c7e0c":"0f0c9f02cc84ee925e6f6fb96a66e9391623f8f3788253060175cfae8b3e34a4","/assets/ab19f4cbc543357183a20571f68380a3":"fc49fe35572196fb9489a8a6c3a5fdf494d1dbd3c790d8e092163a97e2335cf5","/assets/a132ecc4ba5c1517ff83c0fb321bc7fc":"6231d45c4fe5238f7aefeb8d387519374dcca2d7b7bdd4b775c60c789f199a1f","/assets/7d40544b395c5949f4646f5e150fe020":"d8fe7fd5ee97eab1cd8bde49d6aac881ddc0c4d4fa6959fc103ba425003e72ff","/assets/778ffc9fe8773a878e9c30a6304784de":"6f97d018cc8b515df1171aa59404880702ece0333f4b3a22621b68b1cdfd41ce","/assets/78c625386b4d0690b421eb0fc78f7b9c":"4925d2fdfbfc79146b115d21777eeb92638afa1f1d7b0c32cdd2a30bd0ea60b1","/assets/61ca7e64b7d605716c57706cef640b9a":"ef62f98ad70f48d972d5e7f06fa668c61c554b3509601eae35eeda9256d7e6cc","/assets/412dd9275b6b48ad28f5e3d81bb1f626":"5842daba1576cae3106caef0bb9f10b0f9c63b372de6ebbc2898388e8ca97403","/assets/4403c6117ec30c859bc95d70ce4a71d3":"ff5eb5e78aba3da9e7a5d62d5620d27acf314e21fc59aacd4d9db5338b9a532c","/assets/35ba0eaec5a4f5ed12ca16fabeae451d":"c9dc675c0fa80f9b608ebff3c70479f21511b6b02c6ca5c2ee4da9be357b26a0","/assets/3cd68ccdb8938e3711da2e8831b85493":"ad78649de350f3826600d285134a41ab758b2b558865f257a9854474a2d7100f","/assets/2d0a9133e39524f138be6d4db9f4851f":"31084baf01efc69a425f65a46c89386c27fef2b94a5176ed696bbf39c234e1f1","/assets/286d67d3f74808a60a78d3ebf1a5fb57":"8fee32cac2c20d75f401127dca613982bd2cc24636cb0baff0e739d7bc772925","/assets/20e71bdf79e3a97bf55fd9e164041578":"05038227a11262b8b6423b09e444a8caaa0f4ed28a75e53227dcdb1ae6563c10","/_sitemap.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/SignUp.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/SidebarContext.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/assets/19eeb73b9593a38f8e9f418337fc7d10":"1b775caa762f51daa7eb4f32d5e23bd6d1534465aa4b8db24043ba52958c7762","/SettingsScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/ProfileScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/types.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/VisualAssessmentScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/modal.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/LearningPathScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/Home.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/ManageChildrenScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/ForgotPasswordScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/assets/1190ab078c57159f4245a328118fcd9a":"e15147d584d740de8fc401f1f020c291d86490953e6c61101a022db03b47e5d4","/Login.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/assets/0ea69b5077e7c4696db85dbcba75b0e1":"fdfc45373f351e73cdce80a6754e3a08c17344ddfbb11c658c74d180f1550140","/assets/0a328cd9c1afd0afe8e3b1ec5165b1b4":"c2f3e3f9697c952843aae5bdb3f9f5b39f6dde03cb589d366034cc3db25f5940","/assets/0747a1317bbe9c6fc340b889ef8ab3ae":"2c8022034bdd610675958206b2b484be727b204100f62403c34114bb868e296f","/assets/02bc1fa7c0313217bde2d65ccbff40c9":"756e32a1f4c446dac7f3dcf0b2157932e0260e6dd2828a191a54f0886a8c798b","/EditChildScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/assets/069d99eb1fa6712c0b9034a58c6b57dd":"dc7786f9428e8fa3b5c3864852f1ac283877b581dc00c8dda54b553385c450d9","/EditProfileScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/ChildContext.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/ChangePasswordScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/BankingDetailsScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/AddChildScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/+not-found.html":"0f9121290951998b1e689c40ac1727900f7ab437b952ebabbf22dafda530ac62","/(auth)/Login.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/(auth)/ForgotPasswordScreen.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/(auth)/SignUp.html":"0dc46f11124c043913e15121ffbc3a7c76a9ffcbeef3f4f1fcdf165cfd0c16b4","/assets/d759e235e88e47f838062c7ab97308b1":"eaccc6bdc1b10574d46c9adc789e1d1f566d8d3488acef56a19b9380eed0f39a","/assets/ef3d193e6a6ad033724c7872aec1cff7":"bac7a809f1534009f8a988cb9a14cc9aad2d2545e7433542d29c86087ce3f4f8","/assets/6ab8bdb0cedff5a12706a95cee83aaeb":"af415f6c382f73a0ca4c4740ee9a01bb7c5d43d82790628051700c0050dc59e8","/assets/assets/images/logo.6ab8bdb0cedff5a12706a95cee83aaeb.png":"af415f6c382f73a0ca4c4740ee9a01bb7c5d43d82790628051700c0050dc59e8","/_expo/static/js/web/entry-e7f94208d01a5fbb25b1dd7ccb094cec.js":"e8c6c14cf7e13c971aaa94970c6a9a369f2003a62c43c7bbd35c364517c8326b","/_expo/static/js/android/entry-89d8857ecc0b41744ea3a996cd0c100e.hbc":"790787c119725f1bf6964f837178730744769e15b580b1a6bcd85c2d10ae2b2f","/_expo/static/js/ios/entry-8013ec6c59662e900fb8b05544bab111.hbc":"159200ab72fffc6333dcaf5b64f806b7b5007ecd7a44d716c039104c1b16fe5c"}}
+[debug] [2025-09-25T14:27:09.791Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6:populateFiles 200
+[debug] [2025-09-25T14:27:09.791Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6:populateFiles {"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/bright-sprout/versions/f23c39616136e9b6/files"}
+[debug] [2025-09-25T14:27:09.791Z] [hosting][populate queue][FINAL] {"max":487,"min":487,"avg":487,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":487}
+[debug] [2025-09-25T14:27:09.791Z] [hosting] uploads queued: 0
+[debug] [2025-09-25T14:27:09.791Z] [hosting][upload queue][FINAL] {"max":0,"min":9999999999,"avg":0,"active":0,"complete":0,"success":0,"errored":0,"retried":0,"total":0,"elapsed":1758810429791}
+[info] i  hosting: upload complete 
+[info] +  hosting[bright-sprout]: file upload complete 
+[debug] [2025-09-25T14:27:09.792Z] [hosting] deploy completed after 1199ms
+[debug] [2025-09-25T14:27:09.792Z] [
+  {
+    "config": {
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/Home.html"
+        }
+      ],
+      "site": "bright-sprout"
+    },
+    "version": "projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6"
+  }
+]
+[info] i  hosting[bright-sprout]: finalizing version... 
+[debug] [2025-09-25T14:27:09.793Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:09.794Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:09.794Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions/f23c39616136e9b6 updateMask=status%2Cconfig
+[debug] [2025-09-25T14:27:09.794Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions/f23c39616136e9b6 {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/Home.html"}]}}
+[debug] [2025-09-25T14:27:10.164Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions/f23c39616136e9b6 200
+[debug] [2025-09-25T14:27:10.164Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/versions/f23c39616136e9b6 {"name":"projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/Home.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2025-09-25T14:27:07.288103Z","createUser":{"email":"brightsproutinfra@gmail.com"},"finalizeTime":"2025-09-25T14:27:09.140123Z","finalizeUser":{"email":"brightsproutinfra@gmail.com"}}
+[debug] [2025-09-25T14:27:10.164Z] [hosting] finalized version for bright-sprout:[object Object]
+[info] +  hosting[bright-sprout]: version finalized 
+[info] i  hosting[bright-sprout]: releasing new version... 
+[debug] [2025-09-25T14:27:10.164Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:10.164Z] Checked if tokens are valid: true, expires at: 1758812355153
+[debug] [2025-09-25T14:27:10.165Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/channels/live/releases versionName=projects%2F564301011187%2Fsites%2Fbright-sprout%2Fversions%2Ff23c39616136e9b6
+[debug] [2025-09-25T14:27:10.165Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/channels/live/releases {}
+[debug] [2025-09-25T14:27:10.531Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/channels/live/releases 200
+[debug] [2025-09-25T14:27:10.531Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/bright-sprout/channels/live/releases {"name":"projects/564301011187/sites/bright-sprout/channels/live/releases/1758810428992000","version":{"name":"projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/Home.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2025-09-25T14:27:07.288103Z","createUser":{"email":"brightsproutinfra@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSJXuNRtYbu2I3V2Reb_esEOl5ECILyQmXhAtnshLwPUKfKA=mo"},"finalizeTime":"2025-09-25T14:27:09.140123Z","finalizeUser":{"email":"brightsproutinfra@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSJXuNRtYbu2I3V2Reb_esEOl5ECILyQmXhAtnshLwPUKfKA=mo"}},"type":"DEPLOY","releaseTime":"2025-09-25T14:27:08.992Z","releaseUser":{"email":"brightsproutinfra@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSJXuNRtYbu2I3V2Reb_esEOl5ECILyQmXhAtnshLwPUKfKA=mo"}}
+[debug] [2025-09-25T14:27:10.531Z] [hosting] release: {"name":"projects/564301011187/sites/bright-sprout/channels/live/releases/1758810428992000","version":{"name":"projects/564301011187/sites/bright-sprout/versions/f23c39616136e9b6","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/Home.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2025-09-25T14:27:07.288103Z","createUser":{"email":"brightsproutinfra@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSJXuNRtYbu2I3V2Reb_esEOl5ECILyQmXhAtnshLwPUKfKA=mo"},"finalizeTime":"2025-09-25T14:27:09.140123Z","finalizeUser":{"email":"brightsproutinfra@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSJXuNRtYbu2I3V2Reb_esEOl5ECILyQmXhAtnshLwPUKfKA=mo"}},"type":"DEPLOY","releaseTime":"2025-09-25T14:27:08.992Z","releaseUser":{"email":"brightsproutinfra@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSJXuNRtYbu2I3V2Reb_esEOl5ECILyQmXhAtnshLwPUKfKA=mo"}}
+[info] +  hosting[bright-sprout]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/bright-sprout/overview
+[info] Hosting URL: https://bright-sprout.web.app
